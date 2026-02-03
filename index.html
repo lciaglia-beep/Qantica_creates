@@ -1,904 +1,734 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Qantica | Infraestructura Creativa</title>
-    
-    <!-- Fonts: Inter (Main) & JetBrains Mono (Tech details) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <title>Qantica - Professional Immersive Narrative</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            /* Palette - Apple Dark Mode / Story Protocol Vibe */
-            --bg-body: #000000;
-            --bg-card: #0c0c0c;
-            --bg-card-hover: #141414;
-            
-            /* Accents */
-            --accent-yellow: #F5D90A;
-            --accent-glow: rgba(245, 217, 10, 0.15);
-            
-            /* Text */
-            --text-primary: #f5f5f7;
-            --text-secondary: #86868b;
-            --text-tertiary: #424245;
-            
-            /* Borders & Utilities */
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-active: rgba(255, 255, 255, 0.2);
-            --glass: rgba(20, 20, 20, 0.8);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            -webkit-tap-highlight-color: transparent; /* Remove highlight on mobile tap */
-        }
-
+        /* --- Base Configuration Premium --- */
         body {
-            background-color: var(--bg-body);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #050505;
+            color: #f5f5f7;
+            margin: 0;
             overflow-x: hidden;
-            line-height: 1.5;
-            font-size: 16px;
+            /* Height for 9 scenes - Generous scroll space */
+            height: 1800vh; 
+            cursor: default;
         }
 
-        /* Typography Utilities */
-        h1, h2, h3 {
-            letter-spacing: -0.03em;
-            font-weight: 600;
+        :root {
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --accent-gold: #fde047; /* Qantica Gold */
+            --accent-glow: rgba(253, 224, 71, 0.3);
+            --text-on-gold: #374151; /* Gris oscuro suave para leer sobre amarillo */
         }
 
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            letter-spacing: -0.02em;
-        }
-
-        .gradient-text {
-            background: linear-gradient(180deg, #fff 0%, #666 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .yellow-text {
-            color: var(--accent-yellow);
-        }
-
-        /* Navbar */
-        nav {
+        /* --- Interactive Background & Atmosphere --- */
+        #interactive-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(0,0,0,0.5);
-            transition: padding 0.3s ease;
-        }
-
-        .nav-logo {
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: -0.05em;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .nav-logo span {
-            color: var(--accent-yellow);
-        }
-
-        .nav-cta {
-            font-size: 14px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        .nav-cta:hover { color: #fff; }
-
-        /* Animations */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px) scale(0.98);
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-            filter: blur(10px);
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
-        }
-
-        /* --- 1. HERO SECTION --- */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 20px;
-            position: relative;
-            background: radial-gradient(circle at 50% 50%, rgba(20, 20, 20, 1) 0%, rgba(0,0,0,1) 70%);
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80vw;
-            height: 500px;
-            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            height: 100%;
+            z-index: -2; 
             pointer-events: none;
-            z-index: 0;
         }
 
-        .badge {
-            border: 1px solid var(--border-subtle);
-            padding: 6px 16px;
-            border-radius: 100px;
-            color: var(--accent-yellow);
-            margin-bottom: 32px;
-            background: rgba(245, 217, 10, 0.05);
-            display: inline-block;
-            backdrop-filter: blur(10px);
-        }
-
-        .hero h1 {
-            font-size: clamp(48px, 8vw, 96px);
-            line-height: 1.05;
-            max-width: 1000px;
-            margin-bottom: 24px;
-            z-index: 1;
-        }
-
-        .hero p {
-            font-size: clamp(18px, 2vw, 24px);
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto 40px;
-            font-weight: 400;
-            line-height: 1.6;
-        }
-
-        /* --- 2. MARKET TICKER (Logos) --- */
-        .market-section {
-            padding: 60px 0;
-            border-top: 1px solid var(--border-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-            background: #050505;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-        }
-
-        .competitors {
-            display: flex;
-            gap: 60px;
-            opacity: 0.3;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .competitors span {
-            font-size: 20px;
-            font-weight: 500;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-        }
-
-        /* --- 3. THE INFRASTRUCTURE (Timeline) --- */
-        section {
-            padding: 120px 24px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            margin-bottom: 60px;
-        }
-
-        .section-label {
-            color: var(--accent-yellow);
-            display: block;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-        }
-
-        .section-title {
-            font-size: clamp(32px, 4vw, 56px);
-            color: var(--text-primary);
-        }
-
-        /* Interactive Timeline Cards */
-        .timeline-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 24px;
-            position: relative;
-            margin-bottom: 60px;
-        }
-
-        .t-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            padding: 32px 24px;
-            border-radius: 20px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            min-height: 200px;
-        }
-
-        .t-card:hover {
-            border-color: var(--text-tertiary);
-            transform: translateY(-5px);
-            background: #111;
-        }
-
-        .t-card.highlight {
-            border-color: var(--accent-yellow);
-            background: radial-gradient(circle at top right, rgba(245, 217, 10, 0.05), transparent 60%), var(--bg-card);
-        }
-
-        /* Expanded State */
-        .t-card.active {
-            border-color: var(--accent-yellow);
-            background: #111;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.8);
-        }
-
-        .t-icon {
-            font-size: 24px;
-            margin-bottom: 24px;
-            color: var(--text-secondary);
-            transition: color 0.3s;
-        }
-
-        .t-card.active .t-icon,
-        .t-card:hover .t-icon {
-            color: #fff;
-        }
-
-        .highlight .t-icon {
-            color: var(--accent-yellow);
-            text-shadow: 0 0 20px var(--accent-yellow);
-        }
-
-        .t-step {
-            color: var(--text-tertiary);
-            margin-bottom: 8px;
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .t-toggle-icon {
-            opacity: 0;
-            transition: opacity 0.3s;
-            color: var(--text-secondary);
-        }
-        .t-card:hover .t-toggle-icon { opacity: 1; }
-        .t-card.active .t-toggle-icon { opacity: 1; transform: rotate(45deg); }
-
-        .t-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 10px;
-        }
-
-        /* Hidden Details */
-        .t-details {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.5s ease;
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .t-card.active .t-details {
-            max-height: 300px; /* Increased for mobile safety */
-            opacity: 1;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        /* --- COMPACT MEGA TABLE (Investor View) --- */
-        .investor-toggle-container {
-            text-align: center;
-            margin-top: 40px;
-            padding: 0 10px; /* Safe padding for mobile */
-        }
-
-        .btn-toggle-table {
-            background: transparent;
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            padding: 12px 24px;
-            border-radius: 100px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            max-width: 100%; /* Prevent overflow on small screens */
-            justify-content: center;
-        }
-
-        .btn-toggle-table:hover {
-            border-color: var(--text-primary);
-            color: var(--text-primary);
-        }
-
-        .investor-table-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            margin-top: 20px;
-            opacity: 0;
-        }
-
-        .investor-table-wrapper.expanded {
-            max-height: 2000px;
-            opacity: 1;
-        }
-
-        .mega-table-container {
-            overflow-x: auto;
-            border-radius: 20px;
-            border: 1px solid var(--border-subtle);
-            background: #080808;
-            padding-bottom: 10px;
-            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-        }
-        
-        .mega-table-container::-webkit-scrollbar { height: 8px; }
-        .mega-table-container::-webkit-scrollbar-track { background: #111; border-radius: 4px;}
-        .mega-table-container::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        .mega-table-container::-webkit-scrollbar-thumb:hover { background: var(--accent-yellow); }
-
-        .mega-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            text-align: left;
-        }
-
-        .mega-table th, .mega-table td {
-            padding: 16px 16px;
-            border-bottom: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            vertical-align: middle;
-        }
-
-        .mega-table th {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.05em;
-            background: #0c0c0c;
-            position: sticky;
+        .vignette {
+            position: fixed;
             top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, #000 120%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Logo Fixed --- */
+        .brand-logo {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            width: 160px; /* Tamaño profesional */
+            height: auto;
+            z-index: 1000;
+            opacity: 0.9;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+            transition: opacity 0.3s ease;
+        }
+        .brand-logo:hover { opacity: 1; }
+
+        /* --- 3D Viewport --- */
+        #viewport {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            perspective: 1200px;
+            overflow: hidden;
             z-index: 10;
         }
 
-        /* Sticky First Column */
-        .mega-table th:first-child,
-        .mega-table td:first-child {
-            position: sticky;
+        #camera-rig {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        /* --- Scene Structure --- */
+        .scene {
+            position: absolute;
+            top: 0;
             left: 0;
-            background: #080808;
-            z-index: 2;
-            border-right: 1px solid var(--border-subtle);
-            color: var(--text-primary);
-            font-weight: 600;
-            min-width: 140px;
-        }
-        .mega-table th:first-child { z-index: 20; background: #0c0c0c; }
-
-        /* Qantica Column Highlight */
-        .col-qantica {
-            background: rgba(245, 217, 10, 0.03);
-            border-left: 1px solid var(--border-active);
-            border-right: 1px solid var(--border-active);
-        }
-        
-        .mega-table th.col-qantica {
-            color: var(--accent-yellow);
-            background: rgba(245, 217, 10, 0.08);
-            font-weight: 800;
-        }
-
-        .mega-table td.col-qantica {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .check-icon { color: var(--accent-yellow); margin-right: 4px; }
-        .cross-icon { color: #444; margin-right: 4px; }
-
-        .row-hover:hover td { background: #111; }
-        .row-hover:hover td.col-qantica { background: rgba(245, 217, 10, 0.08); }
-
-
-        /* --- 5. BENTO BOX GRID (Phases) --- */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 40px;
-        }
-
-        .bento-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 24px;
-            padding: 40px 32px;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            align-items: center;
+            justify-content: center;
+            opacity: 0; 
+            transition: opacity 0.6s ease-out;
+            pointer-events: none;
+            transform-style: preserve-3d;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .scene.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Ambient Glow */
+        .scene-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 1s ease;
+            transform: translateZ(-100px);
+            pointer-events: none;
+        }
+        .scene.active .scene-glow { opacity: 1; }
+
+        /* --- Content Group (Responsive Scaling) --- */
+        .content-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            will-change: transform, opacity, filter;
+            /* Easing elastic for "fun" feel */
+            transition: all 1.3s cubic-bezier(0.19, 1, 0.22, 1);
+            transform-style: preserve-3d;
+            max-height: 95vh;
+        }
+
+        /* --- EXTREME DIRECTIONAL CHOREOGRAPHY --- */
+        
+        /* 01. Creator: Subtle Fade Up (The Intro) */
+        .scene[data-index="0"] .content-group { transform: scale(0.9) translateY(30px); opacity: 0; }
+        .scene[data-index="0"].active .content-group { transform: scale(1) translateY(0); opacity: 1; }
+
+        /* 02. Upload: FROM RIGHT (Slide In) */
+        .scene[data-index="1"] .content-group { transform: translateX(150%) rotateY(-45deg); opacity: 0; }
+        .scene[data-index="1"].active .content-group { transform: translateX(0) rotateY(0); opacity: 1; }
+
+        /* 03. Context: FROM LEFT (Counter Slide) */
+        .scene[data-index="2"] .content-group { transform: translateX(-150%) rotateY(45deg); opacity: 0; }
+        .scene[data-index="2"].active .content-group { transform: translateX(0) rotateY(0); opacity: 1; }
+
+        /* 04. Analysis: FROM TOP (Drop Down) */
+        .scene[data-index="3"] .content-group { transform: translateY(-150vh) rotateX(60deg); opacity: 0; }
+        .scene[data-index="3"].active .content-group { transform: translateY(0) rotateX(0); opacity: 1; }
+
+        /* 05. Friction: FROM BOTTOM (Rise Up) */
+        .scene[data-index="4"] .content-group { transform: translateY(150vh) scale(0.5); opacity: 0; }
+        .scene[data-index="4"].active .content-group { transform: translateY(0) scale(1); opacity: 1; }
+
+        /* 06. Specialists: DIAGONAL (Bottom-Right) */
+        .scene[data-index="5"] .content-group { transform: translate(100vw, 100vh) rotate(-20deg); opacity: 0; }
+        .scene[data-index="5"].active .content-group { transform: translate(0, 0) rotate(0); opacity: 1; }
+
+        /* 07. Scene by Scene: SPIN (Helix) */
+        .scene[data-index="6"] .content-group { transform: rotateZ(-180deg) scale(0.2); opacity: 0; }
+        .scene[data-index="6"].active .content-group { transform: rotateZ(0) scale(1); opacity: 1; }
+
+        /* 08. Comparison: FLIP (Vertical Rotation) */
+        .scene[data-index="7"] .content-group { transform: rotateX(-90deg); opacity: 0; }
+        .scene[data-index="7"].active .content-group { transform: rotateX(0); opacity: 1; }
+
+        /* 09. Final Review: BIG ZOOM OUT (Cinematic) */
+        .scene[data-index="8"] .content-group { transform: scale(3.0); filter: blur(20px); opacity: 0; }
+        .scene[data-index="8"].active .content-group { transform: scale(1); filter: blur(0); opacity: 1; }
+
+
+        /* --- Typography (Professional Upgrade) --- */
+        .text-panel {
+            max-width: 800px;
+            margin-bottom: 3vh;
+            z-index: 20;
+            transform: translateZ(40px); 
             position: relative;
         }
 
-        .bento-card:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--border-active);
+        h2 {
+            font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+            font-weight: 800; /* Extra bold */
+            letter-spacing: -0.04em; /* Tighter tracking for modern look */
+            line-height: 1.05;
+            /* More sophisticated Platinum/Chrome gradient */
+            background: linear-gradient(180deg, #ffffff 0%, #d4d4d4 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.2rem;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.7));
+            text-transform: capitalize;
         }
 
-        .span-2 {
-            grid-column: span 2;
-        }
-
-        .phase-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 40px;
-        }
-
-        .phase-id {
-            color: var(--accent-yellow);
-            border: 1px solid rgba(245, 217, 10, 0.3);
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-
-        .phase-role {
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-        }
-
-        .bento-card h3 {
-            font-size: 24px;
-            margin-bottom: 12px;
-            color: #fff;
-        }
-
-        .bento-card p {
-            color: var(--text-secondary);
-            font-size: 15px;
+        p {
+            font-size: 1.25rem; /* Slightly larger readability */
             line-height: 1.6;
-            max-width: 90%;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* --- 6. CTA --- */
-        .cta-container {
-            text-align: center;
-            padding: 160px 0;
-            background: radial-gradient(circle at bottom, #1a1a1a 0%, #000 60%);
-        }
-
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: #fff;
-            color: #000;
-            padding: 18px 40px;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 17px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-top: 40px;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-yellow);
-            transform: scale(1.02);
-            box-shadow: 0 0 40px rgba(245, 217, 10, 0.3);
-        }
-
-        /* --- RESPONSIVE OPTIMIZATIONS --- */
-        @media (max-width: 1024px) {
-            .bento-grid { grid-template-columns: 1fr 1fr; }
-            .span-2 { grid-column: span 1; }
-        }
-
-        @media (max-width: 768px) {
-            /* Navbar Compact */
-            nav { padding: 15px 20px; }
-            .nav-logo { font-size: 20px; }
-            .nav-cta { font-size: 12px; }
-
-            /* Hero */
-            .hero { padding: 0 15px; }
-            .hero h1 { font-size: 40px; margin-bottom: 16px; }
-            .hero p { font-size: 16px; margin-bottom: 32px; }
-            .badge { margin-bottom: 24px; font-size: 12px; }
-
-            /* Sections General */
-            section { padding: 60px 20px; } /* Reduced padding */
-            .section-header { margin-bottom: 40px; }
-            .section-title { font-size: 32px; }
-
-            /* Timeline Cards */
-            .timeline-grid { grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px; }
-            .t-card { 
-                padding: 24px 20px; 
-                min-height: auto; 
-            }
-            /* Always show toggle icon on mobile for affordance */
-            .t-toggle-icon { opacity: 1; }
-
-            /* Competitors Ticker */
-            .market-section { padding: 40px 0; }
-            .competitors { gap: 30px; }
-            .competitors span { font-size: 16px; }
-
-            /* Bento Grid */
-            .bento-grid { grid-template-columns: 1fr; gap: 16px; margin-top: 30px; }
-            .bento-card { padding: 30px 24px; }
-            .phase-meta { margin-bottom: 24px; }
+        /* --- NEW TAG STYLE (Stretched Circle, Yellow Fill) --- */
+        .tag {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            display: inline-block;
             
-            /* Table Mobile Tweaks */
-            .investor-toggle-container { margin-top: 30px; }
-            .btn-toggle-table { width: 100%; box-sizing: border-box; }
-            .mega-table th, .mega-table td { padding: 12px 10px; font-size: 12px; }
-            /* Slightly smaller fixed column */
-            .mega-table th:first-child,
-            .mega-table td:first-child { min-width: 120px; }
-
-            /* CTA Footer */
-            .cta-container { padding: 80px 20px; }
-            .cta-container h2 { font-size: 36px !important; }
-            .btn-primary { width: 100%; justify-content: center; }
+            /* Stretched Circle (Pill) */
+            padding: 10px 24px;
+            border-radius: 9999px;
+            
+            /* Yellow Fill + Gray Text */
+            background-color: var(--accent-gold);
+            color: var(--text-on-gold);
+            border: none; /* Removed border */
+            
+            box-shadow: 0 4px 20px rgba(253, 224, 71, 0.25); /* Glow effect */
         }
+
+        /* --- Media Container (16:9 for Recording) --- */
+        .media-wrapper {
+            position: relative;
+            /* WIDTH INCREASED: 850px for cinematic presence */
+            width: 850px;
+            max-width: 95vw;
+            /* RATIO CHANGED: 16/9 for standard screen format */
+            aspect-ratio: 16/9; 
+            height: auto; 
+            border-radius: 20px;
+            background: #000;
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                0 20px 60px -10px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255,255,255,0.05) inset;
+            overflow: hidden;
+            z-index: 10;
+            transition: all 0.4s ease;
+        }
+
+        .media-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(125deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0.85;
+            transition: opacity 0.5s;
+        }
+        
+        .media-wrapper:hover video { opacity: 1; }
+
+        .placeholder-box {
+            position: absolute;
+            inset: 0;
+            display: none;
+            background: radial-gradient(circle at center, #222, #000);
+            color: #555;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+        .video-error .placeholder-box { display: flex; }
+
+        /* --- Premium Buttons --- */
+        .btn-premium {
+            background: var(--accent-gold);
+            color: #000;
+            border: none;
+            backdrop-filter: blur(10px);
+            padding: 16px 36px;
+            border-radius: 99px;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+            margin-top: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(253, 224, 71, 0.3);
+        }
+
+        .btn-premium:hover {
+            background: #fef08a;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(253, 224, 71, 0.5);
+        }
+
+        /* --- Navigation Dots --- */
+        .nav-dots {
+            position: fixed;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .nav-dot.active {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            transform: scale(1.5);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        
+        .nav-dot::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%) translateX(10px);
+            opacity: 0;
+            color: var(--accent-gold);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+        .nav-dot:hover::before { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .brand-logo { width: 100px; top: 20px; left: 20px; }
+            h2 { font-size: 2.5rem; }
+            p { font-size: 1rem; padding: 0 20px; }
+            .content-group { transform: scale(0.85) !important; max-height: 90vh; }
+            .media-wrapper { width: 90vw; }
+            .nav-dots { right: 15px; gap: 10px; }
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- NAV -->
-    <nav>
-        <a href="#" class="nav-logo">
-            QANTICA<span>.</span>
-        </a>
-        <a href="https://qantica.com" target="_blank" class="nav-cta mono">Acceso Miembros &rarr;</a>
-    </nav>
+    <!-- Logo Added Here -->
+    <img src="QANTICALOGO.png" alt="Qantica Logo" class="brand-logo">
 
-    <!-- HERO SECTION -->
-    <div class="hero">
-        <div class="reveal active">
-            <span class="badge mono">V. 2.0 INFRASTRUCTURE</span>
-            <h1 class="gradient-text">Donde el análisis<br>se convierte en desarrollo</h1>
-            <p>Qantica cura a través del análisis invitando al Creador a desarrollar su máximo potencial de su obra</p>
-        </div>
+    <div class="vignette"></div>
+    <canvas id="interactive-bg"></canvas>
+
+    <div class="nav-dots">
+        <div class="nav-dot active" data-label="Creator" onclick="scrollToIndex(0)"></div>
+        <div class="nav-dot" data-label="Upload" onclick="scrollToIndex(1)"></div>
+        <div class="nav-dot" data-label="Context" onclick="scrollToIndex(2)"></div>
+        <div class="nav-dot" data-label="Analyze" onclick="scrollToIndex(3)"></div>
+        <div class="nav-dot" data-label="Friction" onclick="scrollToIndex(4)"></div>
+        <div class="nav-dot" data-label="Specialists" onclick="scrollToIndex(5)"></div>
+        <div class="nav-dot" data-label="Detailed" onclick="scrollToIndex(6)"></div>
+        <div class="nav-dot" data-label="Compare" onclick="scrollToIndex(7)"></div>
+        <div class="nav-dot" data-label="Final" onclick="scrollToIndex(8)"></div>
     </div>
 
-    <!-- MARKET TICKER -->
-    <div class="market-section">
-        <div class="competitors">
-            <span class="mono">GREENLIGHT</span>
-            <span class="mono">STORYFIT</span>
-            <span class="mono">LARGO.AI</span>
-            <span class="mono">SCRIPTBOOK</span>
-            <span class="mono">CALLAIA</span>
-        </div>
-    </div>
+    <div id="viewport">
+        <div id="camera-rig">
 
-    <!-- TIMELINE / PROCESS -->
-    <section>
-        <div class="section-header reveal">
-            <span class="section-label mono">El punto de ruptura</span>
-            <h2 class="section-title">Donde el mercado termina,<br><span class="yellow-text">Qantica empieza.</span></h2>
-            <p style="color: var(--text-tertiary); margin-top: 10px; font-size: 14px;">(Haz click en cada paso para ver detalles)</p>
-        </div>
-
-        <div class="timeline-grid reveal">
-            <!-- Market Standard Step 1 -->
-            <div class="t-card" onclick="toggleCard(this)">
-                <span class="mono t-step">PASO 01 <i class="fa-solid fa-plus t-toggle-icon"></i></span>
-                <i class="fa-solid fa-file-arrow-up t-icon"></i>
-                <span class="t-title">Subida de Guión</span>
-                <div class="t-details">
-                    Ingesta segura del PDF/Final Draft terminado. Validación de formato y protección de propiedad intelectual instantánea.
+            <!-- FASE 01: Creator Registration -->
+            <section class="scene active" data-index="0" style="transform: translate3d(0, 0, 0)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">01 — Creator Registration</span>
+                        <h2 class="text-5xl md:text-7xl">Identity & Profile</h2>
+                        <p>Connect your creative identity. Link social networks, IMDB profiles, and verify your email to establish a secure and professional creator workspace.</p>
+                        <button class="btn-premium magnetic-btn" onclick="window.location.href='https://platform.qantica.com'">Join Qantica</button>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO1.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">🆔</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Profile Verification</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Market Standard Step 2 -->
-            <div class="t-card" onclick="toggleCard(this)">
-                <span class="mono t-step">PASO 02 <i class="fa-solid fa-plus t-toggle-icon"></i></span>
-                <i class="fa-solid fa-microchip t-icon"></i>
-                <span class="t-title">Análisis Estático IA</span>
-                <div class="t-details">
-                    Procesamiento NLP para extraer estructura, personajes y temas. Se genera un "mapa" estático del estado actual de la obra.
+            </section>
+
+            <!-- FASE 02: Upload & Synopsis -->
+            <section class="scene" data-index="1" style="transform: translate3d(0, 0, -2000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">02 — Upload Work</span>
+                        <h2 class="text-5xl md:text-7xl">Import & Cleanse</h2>
+                        <p>Upload your manuscript (PDF, DOC, TXT) and synopsis. The system allows you to instantly fix incoherences and spelling errors before the deep dive.</p>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO2.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">📂</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Data Ingestion</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- The Limit -->
-            <div class="t-card" style="border-color: #333; background: #080808;" onclick="toggleCard(this)">
-                <span class="mono t-step" style="color: #666;">FIN DE MERCADO <i class="fa-solid fa-plus t-toggle-icon"></i></span>
-                <i class="fa-solid fa-ban t-icon" style="color: #444;"></i>
-                <span class="t-title" style="color: #666;">Reporte PDF Pasivo</span>
-                <div class="t-details" style="color: #666;">
-                    Aquí se detiene el estándar actual. Recibes gráficas y notas, pero sin herramientas para ejecutar los cambios.
+            <!-- FASE 03: Pre Analysis (Context) -->
+            <section class="scene" data-index="2" style="transform: translate3d(0, 0, -4000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">03 — Context</span>
+                        <h2 class="text-5xl md:text-7xl">Character & Vision</h2>
+                        <p>Define the core of your story. Answer key context questions and fill out main character profiles to guide the AI's understanding of your vision.</p>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO3.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">👤</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Character Mapping</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Qantica Start -->
-            <div class="t-card highlight" onclick="toggleCard(this)">
-                <span class="mono t-step" style="color: var(--accent-yellow);">INICIO QANTICA <i class="fa-solid fa-plus t-toggle-icon"></i></span>
-                <i class="fa-solid fa-bolt t-icon"></i>
-                <span class="t-title">Infraestructura Viva</span>
-                <div class="t-details" style="color: #fff;">
-                    El guión se convierte en un entorno maleable. Se activan agentes IA (Dramaturgos, Psicólogos) para trabajar escena a escena.
+            <!-- FASE 04: Iniciar Análisis -->
+            <section class="scene" data-index="3" style="transform: translate3d(0, 0, -6000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">04 — Deep Analysis</span>
+                        <h2 class="text-5xl md:text-7xl">Engine Activation</h2>
+                        <p>Once context is set, the Qantica engine awakens. Our technology meticulously scans your work, preparing the structural narrative blueprint.</p>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO4.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">🧠</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Processing</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- DROPDOWN TABLE -->
-        <div class="investor-toggle-container reveal">
-            <button class="btn-toggle-table" onclick="toggleTable()">
-                <i class="fa-solid fa-table-cells"></i> Ver Análisis de Mercado (Visión Inversor) <i class="fa-solid fa-chevron-down" id="toggleIcon"></i>
-            </button>
-            
-            <div class="investor-table-wrapper" id="investorTable">
-                <div class="mega-table-container">
-                    <table class="mega-table">
-                        <thead>
-                            <tr>
-                                <th>Dimensión Clave</th>
-                                <th>Greenlight</th>
-                                <th>Callaia</th>
-                                <th>ScriptBook</th>
-                                <th>Largo.ai</th>
-                                <th>StoryFit</th>
-                                <th class="col-qantica">QANTICA</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Row 1 -->
-                            <tr class="row-hover">
-                                <td>Tipo de producto</td>
-                                <td>Cobertura Auto</td>
-                                <td>Análisis IA</td>
-                                <td>Predicción</td>
-                                <td>Mercado</td>
-                                <td>Data Prod.</td>
-                                <td class="col-qantica"><i class="check-icon fa-solid fa-gem"></i> Infraestructura Integral</td>
-                            </tr>
-                            <!-- Row 2 (UPDATED) -->
-                            <tr class="row-hover">
-                                <td>Input</td>
-                                <td>Guión PDF</td>
-                                <td>Guión</td>
-                                <td>Guión</td>
-                                <td>Guión</td>
-                                <td>Guión</td>
-                                <td class="col-qantica"><i class="check-icon fa-solid fa-file-lines"></i> Guión Terminado</td>
-                            </tr>
-                            <!-- Row 3 -->
-                            <tr class="row-hover">
-                                <td>Output</td>
-                                <td>Score</td>
-                                <td>Insights</td>
-                                <td>Predicción</td>
-                                <td>Métricas</td>
-                                <td>Probabilidad</td>
-                                <td class="col-qantica"><i class="check-icon fa-solid fa-layer-group"></i> Desarrollo Activo</td>
-                            </tr>
-                            <!-- Row 4 -->
-                            <tr class="row-hover">
-                                <td>Narrativa</td>
-                                <td>Básico</td>
-                                <td>Medio</td>
-                                <td>Bajo</td>
-                                <td>Bajo</td>
-                                <td>Medio</td>
-                                <td class="col-qantica"><i class="check-icon fa-solid fa-brain"></i> Profundo / Dramatúrgico</td>
-                            </tr>
-                            <!-- Row 5 -->
-                            <tr class="row-hover">
-                                <td>Post-Análisis</td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i> No</td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i> No</td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i> No</td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i> No</td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i> No</td>
-                                <td class="col-qantica"><i class="check-icon fa-solid fa-check"></i> Sí, in-platform</td>
-                            </tr>
-                            <!-- Row 6 -->
-                            <tr class="row-hover">
-                                <td>Edición</td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td class="col-qantica"><i class="check-icon fa-solid fa-check"></i> Núcleo del producto</td>
-                            </tr>
-                            <!-- Row 7 -->
-                            <tr class="row-hover">
-                                <td>Tutoría</td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td><i class="cross-icon fa-solid fa-xmark"></i></td>
-                                <td class="col-qantica"><i class="check-icon fa-solid fa-user-astronaut"></i> IA Continua</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- FASE 05: Puntos de Fricción -->
+            <section class="scene" data-index="4" style="transform: translate3d(0, 0, -8000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">05 — Friction Points</span>
+                        <h2 class="text-5xl md:text-7xl">Narrative Heatmap</h2>
+                        <p>Discover friction points categorized as Critical, Warning, or Minor. Verify valid concerns or ignore intentional creative choices.</p>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO5.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">⚠️</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Conflict Detection</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- BENTO GRID PHASES -->
-    <section>
-        <div class="section-header reveal">
-            <span class="section-label mono">El Método</span>
-            <h2 class="section-title">6 Fases de Valor</h2>
-        </div>
-
-        <div class="bento-grid reveal">
-            <!-- Card 1 -->
-            <div class="bento-card span-2">
-                <div class="phase-meta">
-                    <span class="phase-id mono">01</span>
-                    <span class="phase-role mono">IA Dramaturgo</span>
+            <!-- FASE 06: Especialistas -->
+            <section class="scene" data-index="5" style="transform: translate3d(0, 0, -10000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">06 — Specialists</span>
+                        <h2 class="text-5xl md:text-7xl">Expert Activation</h2>
+                        <p>With analysis complete, human-in-the-loop specialists are activated. Domain experts refine the system's output to elevate narrative depth.</p>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO6.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">🎓</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Expert Review</span>
+                        </div>
+                    </div>
                 </div>
-                <h3>Idea y Universo</h3>
-                <p>No empezamos analizando. Empezamos construyendo. Definición del núcleo temático, tono y conflicto narrativo base.</p>
-            </div>
+            </section>
 
-            <!-- Card 2 -->
-            <div class="bento-card">
-                <div class="phase-meta">
-                    <span class="phase-id mono">02</span>
-                    <span class="phase-role mono">IA Psicólogo</span>
+            <!-- FASE 07: Escenas por Escena -->
+            <section class="scene" data-index="6" style="transform: translate3d(0, 0, -12000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">07 — Scene by Scene</span>
+                        <h2 class="text-5xl md:text-7xl">Qantica DNA</h2>
+                        <p>The core process. We provoke the author with targeted questions to extract deeper context, reviewing every beat and dialogue minutely.</p>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO7.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">🧬</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Granular Analysis</span>
+                        </div>
+                    </div>
                 </div>
-                <h3>Personajes</h3>
-                <p>Desarrollo de psique profunda. Tus personajes dejan de ser nombres para convertirse en entidades psicológicas complejas.</p>
-            </div>
+            </section>
 
-            <!-- Card 3 -->
-            <div class="bento-card">
-                <div class="phase-meta">
-                    <span class="phase-id mono">03</span>
-                    <span class="phase-role mono">Arquitectura</span>
+            <!-- FASE 08: Tabla Comparativa -->
+            <section class="scene" data-index="7" style="transform: translate3d(0, 0, -14000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">08 — Comparison</span>
+                        <h2 class="text-5xl md:text-7xl">Before vs. After</h2>
+                        <p>Visual proof of elevation. A side-by-side comparison of the original scene against the enhanced Qantica version to demonstrate value.</p>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO8.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">⚖️</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">A/B Evaluation</span>
+                        </div>
+                    </div>
                 </div>
-                <h3>Estructura</h3>
-                <p>Diseño simbólico transversal. Adaptación a modelos clásicos o experimentales según la necesidad de la historia.</p>
-            </div>
+            </section>
 
-            <!-- Card 4 -->
-            <div class="bento-card span-2">
-                <div class="phase-meta">
-                    <span class="phase-id mono">04</span>
-                    <span class="phase-role mono">Visual</span>
+            <!-- FASE 09: Fase Final -->
+            <section class="scene" data-index="8" style="transform: translate3d(0, 0, -16000px)">
+                <div class="scene-glow"></div>
+                <div class="content-group">
+                    <div class="text-panel">
+                        <span class="tag">09 — Final Phase</span>
+                        <h2 class="text-6xl md:text-8xl mb-6">Final Polish</h2>
+                        <p class="mb-8">The work is refined and verified. Perform the final check before proceeding to Phase 2 of the production process.</p>
+                        <button class="btn-premium magnetic-btn" onclick="window.location.href='https://platform.qantica.com'">
+                            Start Phase 2
+                        </button>
+                    </div>
+                    <div class="media-wrapper tilt-card">
+                        <video autoplay loop muted playsinline src="VIDEO9.mp4"></video>
+                        <div class="placeholder-box">
+                            <span class="text-4xl mb-3 text-white opacity-50">✨</span>
+                            <span class="text-[10px] tracking-widest uppercase opacity-40">Completion</span>
+                        </div>
+                    </div>
                 </div>
-                <h3>Atmósfera y Tono</h3>
-                <p>Generación de moodboards y referencias visuales escena por escena para asegurar la coherencia estética.</p>
-            </div>
+            </section>
 
-            <!-- Card 5 -->
-            <div class="bento-card">
-                <div class="phase-meta">
-                    <span class="phase-id mono">05</span>
-                    <span class="phase-role mono">Tutoría</span>
-                </div>
-                <h3>Escritura</h3>
-                <p>Acompañamiento latido a latido. La IA no escribe por ti, te cuestiona para que tú escribas mejor.</p>
-            </div>
-
-             <!-- Card 6 -->
-             <div class="bento-card span-2">
-                <div class="phase-meta">
-                    <span class="phase-id mono">06</span>
-                    <span class="phase-role mono">Asset</span>
-                </div>
-                <h3>Memoria Creativa</h3>
-                <p>Todo el proceso se guarda como una base de conocimiento reutilizable para futuras temporadas o secuelas.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER CTA -->
-    <div class="cta-container">
-        <div class="reveal">
-            <h2 style="font-size: 48px; margin-bottom: 20px;">Infraestructura Lista.</h2>
-            <p style="color: var(--text-secondary);">El futuro de la creación narrativa comienza hoy.</p>
-            <a href="#" class="btn-primary">
-                Comenzar ahora <i class="fa-solid fa-arrow-right"></i>
-            </a>
         </div>
     </div>
 
     <script>
-        // Smooth Reveal Animation Logic
-        const observerOptions = {
-            threshold: 0.15,
-            rootMargin: "0px"
-        };
+        // --- 1. Particles (Atmosphere) ---
+        const canvas = document.getElementById('interactive-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: -1000, y: -1000 };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.1;
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.speedY = (Math.random() - 0.5) * 0.2;
+                this.life = Math.random() * 1;
+                this.decay = Math.random() * 0.005 + 0.002;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= this.decay;
+
+                if (this.life <= 0) this.reset();
+
+                // Mouse interaction
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx*dx + dy*dy);
+                
+                if (distance < 200) {
+                    const force = (200 - distance) / 200;
+                    this.x -= dx * force * 0.02;
+                    this.y -= dy * force * 0.02;
                 }
-            });
-        }, observerOptions);
 
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Toggle Table Logic
-        function toggleTable() {
-            const tableWrapper = document.getElementById('investorTable');
-            const icon = document.getElementById('toggleIcon');
-            
-            if (tableWrapper.classList.contains('expanded')) {
-                tableWrapper.classList.remove('expanded');
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                tableWrapper.classList.add('expanded');
-                icon.style.transform = 'rotate(180deg)';
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.3})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
 
-        // Toggle Timeline Logic
-        function toggleCard(element) {
-            // Optional: Close others if desired, keeping simple logic here for now
-            // document.querySelectorAll('.t-card').forEach(c => c.classList.remove('active'));
-            element.classList.toggle('active');
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 150; i++) particles.push(new Particle());
         }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        resizeCanvas();
+        animateParticles();
+
+
+        // --- 2. Camera & 3D Scroll Logic (Updated for 9 Scenes) ---
+        const cameraRig = document.getElementById('camera-rig');
+        const scenes = document.querySelectorAll('.scene');
+        const dots = document.querySelectorAll('.nav-dot');
+        const videos = document.querySelectorAll('video');
+        
+        const Z_DISTANCE = 2000; 
+        
+        let currentState = { z: 0 };
+        let targetState = { z: 0 };
+
+        videos.forEach(v => {
+            v.addEventListener('error', () => v.parentElement.classList.add('video-error'));
+            v.play().catch(() => {});
+        });
+
+        function updateCamera() {
+            const scrollPx = window.scrollY;
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const scrollFraction = docHeight > 0 ? Math.max(0, Math.min(1, scrollPx / docHeight)) : 0;
+            
+            targetState.z = scrollFraction * (scenes.length - 1) * Z_DISTANCE;
+            
+            // Smooth damping
+            currentState.z += (targetState.z - currentState.z) * 0.05;
+
+            cameraRig.style.transform = `translate3d(0, 0, ${currentState.z}px)`;
+
+            const currentIdx = Math.round(currentState.z / Z_DISTANCE);
+            
+            scenes.forEach((scene, i) => {
+                const sceneZ = i * Z_DISTANCE;
+                const distance = Math.abs(currentState.z - sceneZ);
+                const isActive = distance < Z_DISTANCE * 0.45;
+                
+                if (scene.classList.contains('active') !== isActive) {
+                    scene.classList.toggle('active', isActive);
+                }
+                dots[i].classList.toggle('active', i === currentIdx);
+            });
+
+            requestAnimationFrame(updateCamera);
+        }
+        updateCamera();
+
+        // --- 3. Premium Mouse Effects ---
+        
+        // 3.1 Tilt Effect (Smoother)
+        document.addEventListener('mousemove', (e) => {
+            const activeScene = document.querySelector('.scene.active');
+            if (!activeScene) return;
+
+            const card = activeScene.querySelector('.tilt-card');
+            if (card) {
+                // Divided by 80 instead of 25 for much subtler movement
+                const xAxis = (window.innerWidth / 2 - e.clientX) / 80;
+                const yAxis = (window.innerHeight / 2 - e.clientY) / 80;
+                card.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg) scale3d(1.02, 1.02, 1.02)`;
+            }
+        });
+
+        document.addEventListener('mouseleave', () => {
+             const cards = document.querySelectorAll('.tilt-card');
+             cards.forEach(card => card.style.transform = `perspective(1000px) rotateY(0deg) rotateX(0deg)`);
+        });
+
+        // 3.2 Magnetic Buttons
+        const buttons = document.querySelectorAll('.magnetic-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0px, 0px)';
+            });
+        });
+
+        // Navigation
+        window.scrollToIndex = (index) => {
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const target = (index / (scenes.length - 1)) * docHeight;
+            window.scrollTo({ top: target, behavior: 'smooth' });
+        }
+
     </script>
 </body>
 </html>
+
 
