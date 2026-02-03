@@ -48,10 +48,10 @@
             pointer-events: none;
         }
 
-        /* --- Logo Fixed --- */
+        /* --- Logo Fixed (Ajustado más arriba) --- */
         .brand-logo {
             position: fixed;
-            top: 40px;
+            top: 25px; /* Subido un poco (antes 40px) */
             left: 40px;
             width: 160px; /* Tamaño profesional */
             height: auto;
@@ -82,7 +82,7 @@
             will-change: transform;
         }
 
-        /* --- Scene Structure --- */
+        /* --- Scene Structure (Fix Mobile Ghosting) --- */
         .scene {
             position: absolute;
             top: 0;
@@ -93,17 +93,27 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            opacity: 0; 
-            transition: opacity 0.6s ease-out;
+            
+            /* Estado INACTIVO */
+            opacity: 0;
+            visibility: hidden; /* CRUCIAL para móvil: oculta el elemento del render */
             pointer-events: none;
+            
+            /* Transición suave incluyendo visibility */
+            transition: opacity 0.6s ease-out, visibility 0.6s;
             transform-style: preserve-3d;
             padding: 2rem;
             box-sizing: border-box;
         }
 
         .scene.active {
+            /* Estado ACTIVO */
             opacity: 1;
+            visibility: visible;
             pointer-events: auto;
+            
+            /* Asegura que visibility cambie instantáneamente al entrar */
+            transition: opacity 0.6s ease-out;
         }
 
         /* Ambient Glow */
@@ -354,7 +364,11 @@
 
         /* Mobile */
         @media (max-width: 768px) {
-            .brand-logo { width: 100px; top: 20px; left: 20px; }
+            .brand-logo { 
+                width: 100px; 
+                top: 15px; /* Subido un poco más en móvil */
+                left: 20px; 
+            }
             h2 { font-size: 2.5rem; }
             p { font-size: 1rem; padding: 0 20px; }
             .content-group { transform: scale(0.85) !important; max-height: 90vh; }
@@ -676,6 +690,23 @@
                 
                 if (scene.classList.contains('active') !== isActive) {
                     scene.classList.toggle('active', isActive);
+                    
+                    // Mobile Video Autoplay Fix
+                    const vid = scene.querySelector('video');
+                    if (vid) {
+                        if (isActive) {
+                            // Try to play when entering (even on mobile)
+                            const playPromise = vid.play();
+                            if (playPromise !== undefined) {
+                                playPromise.catch(error => {
+                                    // Auto-play was prevented.
+                                    // This happens on some mobiles if user hasn't interacted.
+                                });
+                            }
+                        } else {
+                            vid.pause(); // Pause when leaving scene to save resources
+                        }
+                    }
                 }
                 dots[i].classList.toggle('active', i === currentIdx);
             });
