@@ -48,13 +48,14 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            mix-blend-mode: difference;
+            /* Removed mix-blend-mode to ensure logo visibility */
             backdrop-filter: blur(12px);
+            background: linear-gradient(to bottom, rgba(3,3,3,0.8) 0%, rgba(3,3,3,0) 100%); /* Subtle gradient for readability */
         }
 
-        /* LOGO FIXED: Doubled size as requested */
+        /* LOGO FIXED: Big size */
         .brand-logo {
-            height: 110px; /* Increased from 55px */
+            height: 110px; 
             width: auto;
             object-fit: contain;
             display: block;
@@ -67,7 +68,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 60px 5%;
+            /* Increased top padding to 150px to clear the large logo */
+            padding: 150px 5% 60px; 
             position: relative;
             border-bottom: 1px solid rgba(255,255,255,0.03);
             box-sizing: border-box;
@@ -136,10 +138,10 @@
         /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 1024px) {
             .nav-bar { padding: 16px 24px; }
-            .brand-logo { height: 70px; } /* Increased for mobile too */
+            .brand-logo { height: 70px; } 
             
             .section-wrapper {
-                padding: 80px 20px;
+                padding: 120px 20px 60px; /* Adjusted for mobile */
                 height: auto;
                 min-height: auto;
             }
@@ -621,6 +623,5 @@
     </script>
 </body>
 </html>
-
 
 
