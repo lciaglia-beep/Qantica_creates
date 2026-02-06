@@ -2,764 +2,625 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Qantica - Professional Immersive Narrative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qantica - Narrative Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- Base Configuration Premium --- */
+        /* --- CORE CONFIG --- */
+        :root {
+            --bg-dark: #030303;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent-gold: #FFD700;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-radius: 20px;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #050505;
-            color: #f5f5f7;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             margin: 0;
             overflow-x: hidden;
-            /* Height for 9 scenes - Generous scroll space */
-            height: 1800vh; 
-            cursor: default;
+            -webkit-font-smoothing: antialiased;
         }
 
-        :root {
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-bg: rgba(20, 20, 20, 0.6);
-            --accent-gold: #fde047; /* Qantica Gold */
-            --accent-glow: rgba(253, 224, 71, 0.3);
-            --text-on-gold: #374151; /* Gris oscuro suave para leer sobre amarillo */
-        }
-
-        /* --- Interactive Background & Atmosphere --- */
-        #interactive-bg {
+        /* --- BACKGROUND FX --- */
+        .fixed-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2; 
-            pointer-events: none;
-        }
-
-        .vignette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, #000 120%);
+            inset: 0;
             z-index: -1;
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(50, 50, 50, 0.08), transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(30, 30, 30, 0.5), transparent 50%);
             pointer-events: none;
         }
 
-        /* --- Logo Fixed (Ajustado más arriba) --- */
-        .brand-logo {
-            position: fixed;
-            top: 25px; /* Subido un poco (antes 40px) */
-            left: 40px;
-            width: 160px; /* Tamaño profesional */
-            height: auto;
-            z-index: 1000;
-            opacity: 0.9;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
-            transition: opacity 0.3s ease;
-        }
-        .brand-logo:hover { opacity: 1; }
-
-        /* --- 3D Viewport --- */
-        #viewport {
+        /* --- NAVIGATION --- */
+        .nav-bar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            perspective: 1200px;
-            overflow: hidden;
-            z-index: 10;
-        }
-
-        #camera-rig {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            will-change: transform;
-        }
-
-        /* --- Scene Structure (Fix Mobile Ghosting) --- */
-        .scene {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            padding: 24px 40px;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            mix-blend-mode: difference;
+            backdrop-filter: blur(12px);
+        }
+
+        /* LOGO FIXED: Doubled size as requested */
+        .brand-logo {
+            height: 110px; /* Increased from 55px */
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* --- SECTION WRAPPER --- */
+        .section-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            
-            /* Estado INACTIVO */
-            opacity: 0;
-            visibility: hidden; /* CRUCIAL para móvil: oculta el elemento del render */
-            pointer-events: none;
-            
-            /* Transición suave incluyendo visibility */
-            transition: opacity 0.6s ease-out, visibility 0.6s;
-            transform-style: preserve-3d;
-            padding: 2rem;
+            padding: 60px 5%;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
             box-sizing: border-box;
         }
 
-        .scene.active {
-            /* Estado ACTIVO */
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            
-            /* Asegura que visibility cambie instantáneamente al entrar */
-            transition: opacity 0.6s ease-out;
+        /* --- LAYOUT SYSTEMS --- */
+        .layout-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Ambient Glow */
-        .scene-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 1s ease;
-            transform: translateZ(-100px);
-            pointer-events: none;
+        /* 1. GRID LAYOUT */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr; 
+            gap: 5rem;
+            align-items: center;
         }
-        .scene.active .scene-glow { opacity: 1; }
 
-        /* --- Content Group (Responsive Scaling) --- */
-        .content-group {
+        /* 2. REVERSE GRID */
+        .layout-grid.reverse {
+            grid-template-columns: 1.4fr 1fr;
+        }
+        .layout-grid.reverse .text-content {
+            order: 2;
+            text-align: right;
+            align-items: flex-end;
+        }
+        .layout-grid.reverse .cinema-card {
+            order: 1;
+        }
+        .layout-grid.reverse .feature-list {
+            border-left: none;
+            border-right: 2px solid rgba(255,255,255,0.1);
+            padding-left: 0;
+            padding-right: 20px;
+            align-items: flex-end;
+        }
+
+        /* 3. CENTER LAYOUT */
+        .layout-center {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             text-align: center;
-            will-change: transform, opacity, filter;
-            /* Easing elastic for "fun" feel */
-            transition: all 1.3s cubic-bezier(0.19, 1, 0.22, 1);
-            transform-style: preserve-3d;
-            max-height: 95vh;
+            gap: 2.5rem;
+            max-width: 1100px;
         }
-
-        /* --- EXTREME DIRECTIONAL CHOREOGRAPHY --- */
-        
-        /* 01. Creator: Subtle Fade Up (The Intro) */
-        .scene[data-index="0"] .content-group { transform: scale(0.9) translateY(30px); opacity: 0; }
-        .scene[data-index="0"].active .content-group { transform: scale(1) translateY(0); opacity: 1; }
-
-        /* 02. Upload: FROM RIGHT (Slide In) */
-        .scene[data-index="1"] .content-group { transform: translateX(150%) rotateY(-45deg); opacity: 0; }
-        .scene[data-index="1"].active .content-group { transform: translateX(0) rotateY(0); opacity: 1; }
-
-        /* 03. Context: FROM LEFT (Counter Slide) */
-        .scene[data-index="2"] .content-group { transform: translateX(-150%) rotateY(45deg); opacity: 0; }
-        .scene[data-index="2"].active .content-group { transform: translateX(0) rotateY(0); opacity: 1; }
-
-        /* 04. Analysis: FROM TOP (Drop Down) */
-        .scene[data-index="3"] .content-group { transform: translateY(-150vh) rotateX(60deg); opacity: 0; }
-        .scene[data-index="3"].active .content-group { transform: translateY(0) rotateX(0); opacity: 1; }
-
-        /* 05. Friction: FROM BOTTOM (Rise Up) */
-        .scene[data-index="4"] .content-group { transform: translateY(150vh) scale(0.5); opacity: 0; }
-        .scene[data-index="4"].active .content-group { transform: translateY(0) scale(1); opacity: 1; }
-
-        /* 06. Specialists: DIAGONAL (Bottom-Right) */
-        .scene[data-index="5"] .content-group { transform: translate(100vw, 100vh) rotate(-20deg); opacity: 0; }
-        .scene[data-index="5"].active .content-group { transform: translate(0, 0) rotate(0); opacity: 1; }
-
-        /* 07. Scene by Scene: SPIN (Helix) */
-        .scene[data-index="6"] .content-group { transform: rotateZ(-180deg) scale(0.2); opacity: 0; }
-        .scene[data-index="6"].active .content-group { transform: rotateZ(0) scale(1); opacity: 1; }
-
-        /* 08. Comparison: FLIP (Vertical Rotation) */
-        .scene[data-index="7"] .content-group { transform: rotateX(-90deg); opacity: 0; }
-        .scene[data-index="7"].active .content-group { transform: rotateX(0); opacity: 1; }
-
-        /* 09. Final Review: BIG ZOOM OUT (Cinematic) */
-        .scene[data-index="8"] .content-group { transform: scale(3.0); filter: blur(20px); opacity: 0; }
-        .scene[data-index="8"].active .content-group { transform: scale(1); filter: blur(0); opacity: 1; }
-
-
-        /* --- Typography (Professional Upgrade) --- */
-        .text-panel {
+        .layout-center .text-content {
+            align-items: center;
             max-width: 800px;
-            margin-bottom: 3vh;
-            z-index: 20;
-            transform: translateZ(40px); 
-            position: relative;
+        }
+        .layout-center .feature-list {
+            flex-direction: row;
+            border: none;
+            padding: 0;
+            gap: 24px;
+            justify-content: center;
+        }
+        .layout-center .cinema-card {
+            width: 100%;
+            max-width: 1000px;
         }
 
-        h2 {
-            font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-            font-weight: 800; /* Extra bold */
-            letter-spacing: -0.04em; /* Tighter tracking for modern look */
+        /* --- RESPONSIVE MOBILE --- */
+        @media (max-width: 1024px) {
+            .nav-bar { padding: 16px 24px; }
+            .brand-logo { height: 70px; } /* Increased for mobile too */
+            
+            .section-wrapper {
+                padding: 80px 20px;
+                height: auto;
+                min-height: auto;
+            }
+            
+            .layout-grid, .layout-grid.reverse, .layout-center {
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                gap: 2.5rem;
+            }
+            
+            .text-content, .layout-grid.reverse .text-content {
+                order: 1 !important;
+                align-items: center !important;
+                text-align: center !important;
+                margin-bottom: 10px;
+            }
+            
+            .cinema-card {
+                order: 2 !important;
+                width: 100% !important;
+                aspect-ratio: 16/9 !important; 
+            }
+            
+            .feature-list, .layout-grid.reverse .feature-list {
+                border: none !important;
+                padding: 0 !important;
+                flex-direction: column;
+                align-items: center !important;
+            }
+
+            .section-title {
+                font-size: 2.5rem !important;
+            }
+        }
+
+        /* --- TYPOGRAPHY --- */
+        .text-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tag-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 100px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,215,0,0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 4.5vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
             line-height: 1.05;
-            /* More sophisticated Platinum/Chrome gradient */
-            background: linear-gradient(180deg, #ffffff 0%, #d4d4d4 60%, #9ca3af 100%);
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.7) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 1.2rem;
-            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.7));
-            text-transform: capitalize;
         }
 
-        p {
-            font-size: 1.25rem; /* Slightly larger readability */
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
             line-height: 1.6;
-            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 28px;
             font-weight: 400;
-            max-width: 700px;
-            margin: 0 auto;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* --- NEW TAG STYLE (Stretched Circle, Yellow Fill) --- */
-        .tag {
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-left: 2px solid rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+        
+        .feature-item {
             font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            
-            /* Stretched Circle (Pill) */
-            padding: 10px 24px;
-            border-radius: 9999px;
-            
-            /* Yellow Fill + Gray Text */
-            background-color: var(--accent-gold);
-            color: var(--text-on-gold);
-            border: none; /* Removed border */
-            
-            box-shadow: 0 4px 20px rgba(253, 224, 71, 0.25); /* Glow effect */
+            color: #d4d4d8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
         }
 
-        /* --- Media Container (16:9 for Recording) --- */
-        .media-wrapper {
-            position: relative;
-            /* WIDTH INCREASED: 850px for cinematic presence */
-            width: 850px;
-            max-width: 95vw;
-            /* RATIO CHANGED: 16/9 for standard screen format */
-            aspect-ratio: 16/9; 
-            height: auto; 
-            border-radius: 20px;
+        /* --- VIDEO CARD --- */
+        .cinema-card {
+            width: 100%;
+            aspect-ratio: 2/1; /* Cinematographic Ratio */
             background: #000;
-            border: 1px solid var(--glass-border);
-            box-shadow: 
-                0 20px 60px -10px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(255,255,255,0.05) inset;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            z-index: 10;
-            transition: all 0.4s ease;
+            position: relative;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8); 
+            border: 1px solid var(--glass-border);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+            cursor: pointer;
+            z-index: 5;
         }
-
-        .media-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(125deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
-            pointer-events: none;
-            z-index: 2;
+        
+        .cinema-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.05);
         }
 
         video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.5s ease;
             display: block;
-            opacity: 0.85;
-            transition: opacity 0.5s;
         }
-        
-        .media-wrapper:hover video { opacity: 1; }
 
-        .placeholder-box {
+        .cinema-card:hover video,
+        .cinema-card.playing video {
+            opacity: 1;
+        }
+
+        .sound-badge {
             position: absolute;
-            inset: 0;
-            display: none;
-            background: radial-gradient(circle at center, #222, #000);
-            color: #555;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
-        .video-error .placeholder-box { display: flex; }
-
-        /* --- Premium Buttons --- */
-        .btn-premium {
-            background: var(--accent-gold);
-            color: #000;
-            border: none;
-            backdrop-filter: blur(10px);
-            padding: 16px 36px;
-            border-radius: 99px;
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            cursor: pointer;
-            margin-top: 2.5rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(253, 224, 71, 0.3);
-        }
-
-        .btn-premium:hover {
-            background: #fef08a;
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 10px 25px rgba(253, 224, 71, 0.5);
-        }
-
-        /* --- Navigation Dots --- */
-        .nav-dots {
-            position: fixed;
-            right: 40px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .nav-dot {
-            width: 8px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .nav-dot.active {
-            background: var(--accent-gold);
-            border-color: var(--accent-gold);
-            transform: scale(1.5);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-        
-        .nav-dot::before {
-            content: attr(data-label);
-            position: absolute;
+            bottom: 20px;
             right: 20px;
-            top: 50%;
-            transform: translateY(-50%) translateX(10px);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             opacity: 0;
-            color: var(--accent-gold);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            white-space: nowrap;
-            transition: 0.3s;
+            transform: translateY(10px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255,255,255,0.1);
             pointer-events: none;
+            letter-spacing: 0.05em;
         }
-        .nav-dot:hover::before { opacity: 1; transform: translateY(-50%) translateX(0); }
 
+        .cinema-card:hover .sound-badge {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-        /* Mobile */
-        @media (max-width: 768px) {
-            .brand-logo { 
-                width: 100px; 
-                top: 15px; /* Subido un poco más en móvil */
-                left: 20px; 
-            }
-            h2 { font-size: 2.5rem; }
-            p { font-size: 1rem; padding: 0 20px; }
-            .content-group { transform: scale(0.85) !important; max-height: 90vh; }
-            .media-wrapper { width: 90vw; }
-            .nav-dots { right: 15px; gap: 10px; }
+        /* --- ANIMATIONS --- */
+        .reveal-blur {
+            opacity: 0;
+            filter: blur(12px);
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-blur.visible {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
+        }
+
+        /* --- CTA BUTTON --- */
+        .start-btn {
+            padding: 16px 42px;
+            background: #fff;
+            color: #000;
+            font-weight: 700;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .start-btn:hover {
+            transform: scale(1.05);
+            background: var(--accent-gold);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        }
+
+        /* --- SPECIAL FIX FOR SLIDE 1 --- */
+        /* Forces the video in the first grid to fill completely without black borders */
+        .layout-grid .cinema-card.hero-card {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 2/1; /* Enforce same ratio */
+        }
+        .layout-grid .cinema-card.hero-card video {
+            object-fit: cover; /* Strict cover to remove borders */
+            width: 100%;
+            height: 100%;
         }
 
     </style>
 </head>
 <body>
 
-    <!-- Logo Added Here -->
-    <img src="QANTICALOGO.png" alt="Qantica Logo" class="brand-logo">
+    <div class="fixed-bg"></div>
 
-    <div class="vignette"></div>
-    <canvas id="interactive-bg"></canvas>
+    <nav class="nav-bar">
+        <!-- FIXED LOGO SIZE (Bigger) -->
+        <img src="QANTICALOGO.png" alt="Qantica" class="brand-logo">
+        <div class="hidden md:block text-xs font-bold tracking-[0.2em] opacity-60">NARRATIVE OS v2.0</div>
+    </nav>
 
-    <div class="nav-dots">
-        <div class="nav-dot active" data-label="Creator" onclick="scrollToIndex(0)"></div>
-        <div class="nav-dot" data-label="Upload" onclick="scrollToIndex(1)"></div>
-        <div class="nav-dot" data-label="Context" onclick="scrollToIndex(2)"></div>
-        <div class="nav-dot" data-label="Analyze" onclick="scrollToIndex(3)"></div>
-        <div class="nav-dot" data-label="Friction" onclick="scrollToIndex(4)"></div>
-        <div class="nav-dot" data-label="Specialists" onclick="scrollToIndex(5)"></div>
-        <div class="nav-dot" data-label="Detailed" onclick="scrollToIndex(6)"></div>
-        <div class="nav-dot" data-label="Compare" onclick="scrollToIndex(7)"></div>
-        <div class="nav-dot" data-label="Final" onclick="scrollToIndex(8)"></div>
-    </div>
-
-    <div id="viewport">
-        <div id="camera-rig">
-
-            <!-- FASE 01: Creator Registration -->
-            <section class="scene active" data-index="0" style="transform: translate3d(0, 0, 0)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">01 — Creator Registration</span>
-                        <h2 class="text-5xl md:text-7xl">Identity & Profile</h2>
-                        <p>Connect your creative identity. Link social networks, IMDB profiles, and verify your email to establish a secure and professional creator workspace.</p>
-                        <button class="btn-premium magnetic-btn" onclick="window.location.href='https://platform.qantica.com'">Join Qantica</button>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO1.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">🆔</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Profile Verification</span>
-                        </div>
+    <main>
+        
+        <!-- SCENE 01: Standard Grid (Video Fixed) -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-grid">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">01 — Welcome</span>
+                    <h1 class="section-title">Identity &<br>Workspace</h1>
+                    <p class="section-desc">Connect your creative soul. Qantica provides a secure environment specifically designed for professional storytellers.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Video-based Onboarding</li>
+                        <li class="feature-item">Secure Cloud Vault</li>
+                    </ul>
+                </div>
+                
+                <!-- Added 'hero-card' class for specific fix -->
+                <div class="cinema-card hero-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO1.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 02: Upload & Synopsis -->
-            <section class="scene" data-index="1" style="transform: translate3d(0, 0, -2000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">02 — Upload Work</span>
-                        <h2 class="text-5xl md:text-7xl">Import & Cleanse</h2>
-                        <p>Upload your manuscript (PDF, DOC, TXT) and synopsis. The system allows you to instantly fix incoherences and spelling errors before the deep dive.</p>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO2.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">📂</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Data Ingestion</span>
-                        </div>
+        <!-- SCENE 02: Center Layout -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-center">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">02 — Ingestion</span>
+                    <h2 class="section-title">Manuscript Intake</h2>
+                    <p class="section-desc">Bring your words to life. Our intelligent engine fixes structural errors while preserving your unique voice.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Format Normalization</li>
+                        <li class="feature-item">Voice Preservation</li>
+                    </ul>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="auto" src="VIDEO2.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 03: Pre Analysis (Context) -->
-            <section class="scene" data-index="2" style="transform: translate3d(0, 0, -4000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">03 — Context</span>
-                        <h2 class="text-5xl md:text-7xl">Character & Vision</h2>
-                        <p>Define the core of your story. Answer key context questions and fill out main character profiles to guide the AI's understanding of your vision.</p>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO3.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">👤</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Character Mapping</span>
-                        </div>
+        <!-- SCENE 03: Reverse Grid -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-grid reverse">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">03 — Depth</span>
+                    <h2 class="section-title">Character<br>Vision</h2>
+                    <p class="section-desc">Go deeper into your protagonists. Map out motivations and arcs with our proprietary context engine.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Motivation Mapping</li>
+                        <li class="feature-item">Relationship Web</li>
+                    </ul>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO3.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 04: Iniciar Análisis -->
-            <section class="scene" data-index="3" style="transform: translate3d(0, 0, -6000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">04 — Deep Analysis</span>
-                        <h2 class="text-5xl md:text-7xl">Engine Activation</h2>
-                        <p>Once context is set, the Qantica engine awakens. Our technology meticulously scans your work, preparing the structural narrative blueprint.</p>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO4.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">🧠</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Processing</span>
-                        </div>
+        <!-- SCENE 04: Standard Grid -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-grid">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">04 — Intelligence</span>
+                    <h2 class="section-title">Neural<br>Scan</h2>
+                    <p class="section-desc">Experience the scan. AI meticulously analyzes paragraphs to find the hidden potential of your narrative.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Deep Text Analysis</li>
+                        <li class="feature-item">Subtext Detection</li>
+                    </ul>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO4.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 05: Puntos de Fricción -->
-            <section class="scene" data-index="4" style="transform: translate3d(0, 0, -8000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">05 — Friction Points</span>
-                        <h2 class="text-5xl md:text-7xl">Narrative Heatmap</h2>
-                        <p>Discover friction points categorized as Critical, Warning, or Minor. Verify valid concerns or ignore intentional creative choices.</p>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO5.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">⚠️</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Conflict Detection</span>
-                        </div>
+        <!-- SCENE 05: Center Layout -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-center">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">05 — Optimization</span>
+                    <h2 class="section-title">Friction Heatmap</h2>
+                    <p class="section-desc">Identify where your story peaks and where it needs more heart through our visual heatmap.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Pacing Visualization</li>
+                        <li class="feature-item">Emotional Peaks</li>
+                    </ul>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO5.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 06: Especialistas -->
-            <section class="scene" data-index="5" style="transform: translate3d(0, 0, -10000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">06 — Specialists</span>
-                        <h2 class="text-5xl md:text-7xl">Expert Activation</h2>
-                        <p>With analysis complete, human-in-the-loop specialists are activated. Domain experts refine the system's output to elevate narrative depth.</p>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO6.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">🎓</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Expert Review</span>
-                        </div>
+        <!-- SCENE 06: Reverse Grid -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-grid reverse">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">06 — Humanity</span>
+                    <h2 class="section-title">Expert<br>Review</h2>
+                    <p class="section-desc">Humanity meets technology. Specialized editors refine suggestions to ensure art remains authentic.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Human-in-the-loop</li>
+                        <li class="feature-item">Artistic Integrity</li>
+                    </ul>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO6.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 07: Escenas por Escena -->
-            <section class="scene" data-index="6" style="transform: translate3d(0, 0, -12000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">07 — Scene by Scene</span>
-                        <h2 class="text-5xl md:text-7xl">Qantica DNA</h2>
-                        <p>The core process. We provoke the author with targeted questions to extract deeper context, reviewing every beat and dialogue minutely.</p>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO7.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">🧬</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Granular Analysis</span>
-                        </div>
+        <!-- SCENE 07: Standard Grid -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-grid">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">07 — Genetics</span>
+                    <h2 class="section-title">Narrative<br>DNA</h2>
+                    <p class="section-desc">Dialogue, beats, and tempo. We break down the DNA of your scenes to make every word count.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Beat Analysis</li>
+                        <li class="feature-item">Tempo Control</li>
+                    </ul>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO7.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 08: Tabla Comparativa -->
-            <section class="scene" data-index="7" style="transform: translate3d(0, 0, -14000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">08 — Comparison</span>
-                        <h2 class="text-5xl md:text-7xl">Before vs. After</h2>
-                        <p>Visual proof of elevation. A side-by-side comparison of the original scene against the enhanced Qantica version to demonstrate value.</p>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO8.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">⚖️</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">A/B Evaluation</span>
-                        </div>
+        <!-- SCENE 08: Reverse Grid -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-grid reverse">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">08 — Transformation</span>
+                    <h2 class="section-title">Before &<br>After</h2>
+                    <p class="section-desc">See the evolution. Watch how original ideas transform into a polished masterpiece side-by-side.</p>
+                    <ul class="feature-list">
+                        <li class="feature-item">Real-time Comparison</li>
+                        <li class="feature-item">Version History</li>
+                    </ul>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO8.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- FASE 09: Fase Final -->
-            <section class="scene" data-index="8" style="transform: translate3d(0, 0, -16000px)">
-                <div class="scene-glow"></div>
-                <div class="content-group">
-                    <div class="text-panel">
-                        <span class="tag">09 — Final Phase</span>
-                        <h2 class="text-6xl md:text-8xl mb-6">Final Polish</h2>
-                        <p class="mb-8">The work is refined and verified. Perform the final check before proceeding to Phase 2 of the production process.</p>
-                        <button class="btn-premium magnetic-btn" onclick="window.location.href='https://platform.qantica.com'">
-                            Start Phase 2
-                        </button>
-                    </div>
-                    <div class="media-wrapper tilt-card">
-                        <video autoplay loop muted playsinline src="VIDEO9.mp4"></video>
-                        <div class="placeholder-box">
-                            <span class="text-4xl mb-3 text-white opacity-50">✨</span>
-                            <span class="text-[10px] tracking-widest uppercase opacity-40">Completion</span>
-                        </div>
+        <!-- SCENE 09: Center (Finish) -->
+        <section class="section-wrapper">
+            <div class="layout-container layout-center">
+                <div class="text-content reveal-blur">
+                    <span class="tag-pill">09 — Mastery</span>
+                    <h2 class="section-title">The Finish Line</h2>
+                    <p class="section-desc">Mastered and ready. Your story is now prepared for global production and distribution.</p>
+                    <a href="#" class="start-btn">Start Your Journey</a>
+                </div>
+                
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                    <video loop muted playsinline preload="metadata" src="VIDEO9.mp4"></video>
+                    <div class="sound-badge">
+                        <span>RESTART & UNMUTE</span>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-        </div>
-    </div>
+    </main>
+
+    <footer class="py-12 text-center border-t border-white/5 text-gray-600 text-xs tracking-widest uppercase">
+        Qantica Inc. © 2024 — Building the future of storytelling
+    </footer>
 
     <script>
-        // --- 1. Particles (Atmosphere) ---
-        const canvas = document.getElementById('interactive-bg');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let mouse = { x: -1000, y: -1000 };
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
-        }
-
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5 + 0.1;
-                this.speedX = (Math.random() - 0.5) * 0.2;
-                this.speedY = (Math.random() - 0.5) * 0.2;
-                this.life = Math.random() * 1;
-                this.decay = Math.random() * 0.005 + 0.002;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life -= this.decay;
-
-                if (this.life <= 0) this.reset();
-
-                // Mouse interaction
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const distance = Math.sqrt(dx*dx + dy*dy);
-                
-                if (distance < 200) {
-                    const force = (200 - distance) / 200;
-                    this.x -= dx * force * 0.02;
-                    this.y -= dy * force * 0.02;
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
                 }
+            });
+        }, { threshold: 0.1, rootMargin: "-50px 0px" });
 
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.3})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+        document.querySelectorAll('.reveal-blur').forEach(el => revealObserver.observe(el));
 
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 150; i++) particles.push(new Particle());
-        }
+        const cards = document.querySelectorAll('.cinema-card');
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-        resizeCanvas();
-        animateParticles();
-
-
-        // --- 2. Camera & 3D Scroll Logic (Updated for 9 Scenes) ---
-        const cameraRig = document.getElementById('camera-rig');
-        const scenes = document.querySelectorAll('.scene');
-        const dots = document.querySelectorAll('.nav-dot');
-        const videos = document.querySelectorAll('video');
-        
-        const Z_DISTANCE = 2000; 
-        
-        let currentState = { z: 0 };
-        let targetState = { z: 0 };
-
-        videos.forEach(v => {
-            v.addEventListener('error', () => v.parentElement.classList.add('video-error'));
-            v.play().catch(() => {});
-        });
-
-        function updateCamera() {
-            const scrollPx = window.scrollY;
-            const docHeight = document.body.offsetHeight - window.innerHeight;
-            const scrollFraction = docHeight > 0 ? Math.max(0, Math.min(1, scrollPx / docHeight)) : 0;
-            
-            targetState.z = scrollFraction * (scenes.length - 1) * Z_DISTANCE;
-            
-            // Smooth damping
-            currentState.z += (targetState.z - currentState.z) * 0.05;
-
-            cameraRig.style.transform = `translate3d(0, 0, ${currentState.z}px)`;
-
-            const currentIdx = Math.round(currentState.z / Z_DISTANCE);
-            
-            scenes.forEach((scene, i) => {
-                const sceneZ = i * Z_DISTANCE;
-                const distance = Math.abs(currentState.z - sceneZ);
-                const isActive = distance < Z_DISTANCE * 0.45;
+        const scrollVideoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const card = entry.target;
+                const video = card.querySelector('video');
                 
-                if (scene.classList.contains('active') !== isActive) {
-                    scene.classList.toggle('active', isActive);
-                    
-                    // Mobile Video Autoplay Fix
-                    const vid = scene.querySelector('video');
-                    if (vid) {
-                        if (isActive) {
-                            // Try to play when entering (even on mobile)
-                            const playPromise = vid.play();
-                            if (playPromise !== undefined) {
-                                playPromise.catch(error => {
-                                    // Auto-play was prevented.
-                                    // This happens on some mobiles if user hasn't interacted.
-                                });
-                            }
-                        } else {
-                            vid.pause(); // Pause when leaving scene to save resources
-                        }
+                if (entry.isIntersecting) {
+                    video.muted = true;
+                    if (video.currentTime > 0.5 && video.paused) {
+                         video.currentTime = 0; 
                     }
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {});
+                    }
+                    card.classList.add('playing');
+                } else {
+                    video.pause();
+                    card.classList.remove('playing');
                 }
-                dots[i].classList.toggle('active', i === currentIdx);
+            });
+        }, { threshold: 0.5 }); 
+
+        cards.forEach(card => {
+            const video = card.querySelector('video');
+            scrollVideoObserver.observe(card);
+
+            card.addEventListener('mouseenter', () => {
+                video.currentTime = 0; 
+                video.muted = false;   
+                video.volume = 1.0; 
+                
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => console.error("Hover play error:", e));
+                }
             });
 
-            requestAnimationFrame(updateCamera);
-        }
-        updateCamera();
-
-        // --- 3. Premium Mouse Effects ---
-        
-        // 3.1 Tilt Effect (Smoother)
-        document.addEventListener('mousemove', (e) => {
-            const activeScene = document.querySelector('.scene.active');
-            if (!activeScene) return;
-
-            const card = activeScene.querySelector('.tilt-card');
-            if (card) {
-                // Divided by 80 instead of 25 for much subtler movement
-                const xAxis = (window.innerWidth / 2 - e.clientX) / 80;
-                const yAxis = (window.innerHeight / 2 - e.clientY) / 80;
-                card.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg) scale3d(1.02, 1.02, 1.02)`;
-            }
-        });
-
-        document.addEventListener('mouseleave', () => {
-             const cards = document.querySelectorAll('.tilt-card');
-             cards.forEach(card => card.style.transform = `perspective(1000px) rotateY(0deg) rotateX(0deg)`);
-        });
-
-        // 3.2 Magnetic Buttons
-        const buttons = document.querySelectorAll('.magnetic-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-            });
-
-            btn.addEventListener('mouseleave', () => {
-                btn.style.transform = 'translate(0px, 0px)';
+            card.addEventListener('mouseleave', () => {
+                video.muted = true; 
             });
         });
-
-        // Navigation
-        window.scrollToIndex = (index) => {
-            const docHeight = document.body.offsetHeight - window.innerHeight;
-            const target = (index / (scenes.length - 1)) * docHeight;
-            window.scrollTo({ top: target, behavior: 'smooth' });
-        }
-
     </script>
 </body>
 </html>
+
 
 
