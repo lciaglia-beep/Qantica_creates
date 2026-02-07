@@ -127,7 +127,6 @@
             transition: all 0.3s ease;
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
             animation: pulse-gold 2s infinite;
-            /* Ensure clickable area is good on mobile */
             min-width: 280px;
         }
 
@@ -239,10 +238,8 @@
             .brand-logo { height: 100px; } 
             
             .section-wrapper {
-                /* Increased top padding to ensure logo doesn't overlap content */
                 padding: 140px 20px 60px; 
                 height: auto;
-                /* Dynamic Viewport Height for mobile browsers */
                 min-height: 100dvh; 
                 align-items: center; 
             }
@@ -260,14 +257,12 @@
                 align-items: center !important;
                 text-align: center !important;
                 margin-bottom: 20px;
-                /* Ensure text is readable */
                 text-shadow: 0 2px 10px rgba(0,0,0,0.5);
             }
             
             .cinema-card, .layout-center .cinema-card {
                 order: 2 !important;
                 width: 100% !important;
-                /* 16/9 is safer for mobile vertical viewing */
                 aspect-ratio: 16/9 !important; 
                 max-height: none !important;
             }
@@ -284,7 +279,6 @@
                 font-size: 2.2rem !important;
             }
             
-            /* Adjust Activate Button for mobile */
             #intro-overlay .brand-logo { height: 100px !important; }
             .activate-btn { padding: 16px 30px; font-size: 1rem; min-width: auto; }
         }
@@ -415,9 +409,8 @@
             cursor: pointer;
         }
         
-        /* Show on hover OR if tour is active on mobile */
-        .cinema-card:hover .local-mute-btn,
-        .cinema-card.tour-active .local-mute-btn {
+        /* Show ONLY on hover */
+        .cinema-card:hover .local-mute-btn {
             opacity: 1;
             transform: scale(1);
         }
@@ -437,11 +430,11 @@
             display: flex;
             gap: 12px;
             z-index: 20;
-            opacity: 0;
+            opacity: 0; /* Hidden by default */
             transition: all 0.3s ease;
         }
 
-        .cinema-card.tour-active .card-controls,
+        /* Show ONLY on hover */
         .cinema-card:hover .card-controls {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
@@ -486,33 +479,26 @@
             transform: translateY(0);
         }
 
-        /* --- CTA BUTTON --- */
-        .start-btn {
-            padding: 16px 42px;
-            background: #fff;
-            color: #000;
-            font-weight: 700;
-            border-radius: 100px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            display: inline-block;
-            margin-top: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-        }
-        .start-btn:hover {
-            transform: scale(1.05);
-            background: var(--accent-gold);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
-        }
-
         /* --- FIXES --- */
         .layout-grid .cinema-card.hero-card { width: 100%; height: 100%; aspect-ratio: 2/1; }
         .layout-grid .cinema-card.hero-card video { object-fit: cover; width: 100%; height: 100%; }
         
+        /* FIX FOR SCENE 7 (Video 8): Reduce height slightly to avoid black bars/cut off */
+        #scene-7 .cinema-card {
+            max-height: 45vh; /* Custom Constraint */
+            width: auto;
+            max-width: 100%;
+        }
+
+        /* ADJUST SCENE 9 (Final): Lift up */
+        #scene-8 .layout-center {
+            transform: translateY(-10vh); /* Lift more */
+        }
+
         @media (max-width: 1024px) {
              .layout-grid .cinema-card.hero-card { aspect-ratio: 16/9; }
+             #scene-7 .cinema-card { max-height: none; width: 100%; } /* Reset on mobile */
+             #scene-8 .layout-center { transform: none; }
         }
 
     </style>
@@ -722,15 +708,13 @@
             </div>
         </section>
 
-        <!-- SCENE 09 -->
+        <!-- SCENE 09 (Final, Button Removed) -->
         <section class="section-wrapper locked" id="scene-8">
             <div class="layout-container layout-center">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">09 — Mastery</span>
                     <h2 class="section-title">The Finish Line</h2>
                     <p class="section-desc">Mastered and ready. Your story is now prepared for global production and distribution.</p>
-                    <!-- RESTART BUTTON -->
-                    <button class="start-btn" onclick="restartTour()">START AGAIN</button>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
@@ -746,10 +730,6 @@
         </section>
 
     </main>
-
-    <footer class="py-12 text-center border-t border-white/5 text-gray-600 text-xs tracking-widest uppercase">
-        Qantica Inc. © 2024 — Building the future of storytelling
-    </footer>
 
     <script>
         // --- GLOBAL STATE ---
@@ -788,25 +768,13 @@
             document.getElementById('intro-overlay').classList.add('hidden-overlay');
             document.body.classList.add('tour-mode');
 
-            // MOBILE WARM-UP HACK: 
-            // Try to initialize audio context for all videos on the first interaction
+            // MOBILE WARM-UP HACK
             document.querySelectorAll('video').forEach(v => {
                 v.loop = false;
-                v.muted = false; // Attempt unmute permission trigger
+                v.muted = false; 
             });
 
             playScene(0);
-        }
-
-        function restartTour() {
-            const currentVideos = document.querySelectorAll('video');
-            currentVideos.forEach(v => {
-                v.pause();
-                v.currentTime = 0;
-                v.muted = true;
-            });
-            window.scrollTo(0,0);
-            activateTour();
         }
 
         function playScene(index) {
@@ -834,13 +802,12 @@
             card.classList.add('tour-active');
             
             video.currentTime = 0;
-            video.muted = false; // Force Unmute
+            video.muted = false; 
             video.volume = 1.0;
             
             const playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.catch(e => {
-                    // Fail gracefully on strict mobile browsers
                     video.muted = true;
                     video.play();
                 });
@@ -896,4 +863,5 @@
     </script>
 </body>
 </html>
+
 
