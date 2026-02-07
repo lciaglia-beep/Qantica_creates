@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Qantica - Narrative Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,6 +24,11 @@
             margin: 0;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth;
+        }
+
+        body.tour-mode {
+            overflow: hidden;
         }
 
         /* --- BACKGROUND FX --- */
@@ -43,22 +48,100 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 24px 40px;
+            padding: 20px 40px; 
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: flex-start;
+            align-items: flex-start;
             z-index: 1000;
-            /* Removed mix-blend-mode to ensure logo visibility */
-            backdrop-filter: blur(12px);
-            background: linear-gradient(to bottom, rgba(3,3,3,0.8) 0%, rgba(3,3,3,0) 100%); /* Subtle gradient for readability */
+            background: linear-gradient(to bottom, rgba(3,3,3,0.9) 0%, rgba(3,3,3,0) 100%);
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            pointer-events: none; 
         }
 
-        /* LOGO FIXED: Big size */
+        .nav-bar.nav-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        /* LOGO: DOUBLE SIZE */
         .brand-logo {
-            height: 110px; 
+            height: 220px; 
             width: auto;
             object-fit: contain;
             display: block;
+            margin-top: 0px; 
+            pointer-events: auto;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); 
+        }
+
+        /* --- PROGRESS BAR --- */
+        .progress-track {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            z-index: 2000;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-gold);
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        /* --- INTRO OVERLAY --- */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #intro-overlay.hidden-overlay {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .activate-btn {
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 20px 50px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+            animation: pulse-gold 2s infinite;
+            /* Ensure clickable area is good on mobile */
+            min-width: 280px;
+        }
+
+        .activate-btn:hover {
+            background: var(--accent-gold);
+            color: #000;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
         }
 
         /* --- SECTION WRAPPER --- */
@@ -68,11 +151,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Increased top padding to 150px to clear the large logo */
-            padding: 150px 5% 60px; 
+            padding: 180px 5% 60px; 
             position: relative;
             border-bottom: 1px solid rgba(255,255,255,0.03);
             box-sizing: border-box;
+            transition: opacity 0.5s ease, filter 0.5s ease;
+        }
+
+        .section-wrapper.locked {
+            opacity: 0.1;
+            filter: blur(10px) grayscale(100%);
+            pointer-events: none;
         }
 
         /* --- LAYOUT SYSTEMS --- */
@@ -116,12 +205,17 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: 2.5rem;
-            max-width: 1100px;
+            gap: 2rem; 
+            max-width: 1200px;
+            height: 100%;
+            justify-content: center;
+            transform: translateY(-5vh); 
         }
         .layout-center .text-content {
             align-items: center;
             max-width: 800px;
+            margin-top: 0px; 
+            z-index: 20;
         }
         .layout-center .feature-list {
             flex-direction: row;
@@ -130,40 +224,52 @@
             gap: 24px;
             justify-content: center;
         }
+        
         .layout-center .cinema-card {
-            width: 100%;
-            max-width: 1000px;
+            width: 70%;
+            max-width: 900px;
+            max-height: 50vh; 
+            aspect-ratio: 2/1; 
+            margin: 0 auto;
         }
 
-        /* --- RESPONSIVE MOBILE --- */
+        /* --- RESPONSIVE MOBILE OPTIMIZATION --- */
         @media (max-width: 1024px) {
-            .nav-bar { padding: 16px 24px; }
-            .brand-logo { height: 70px; } 
+            .nav-bar { padding: 15px 20px; }
+            .brand-logo { height: 100px; } 
             
             .section-wrapper {
-                padding: 120px 20px 60px; /* Adjusted for mobile */
+                /* Increased top padding to ensure logo doesn't overlap content */
+                padding: 140px 20px 60px; 
                 height: auto;
-                min-height: auto;
+                /* Dynamic Viewport Height for mobile browsers */
+                min-height: 100dvh; 
+                align-items: center; 
             }
             
             .layout-grid, .layout-grid.reverse, .layout-center {
                 display: flex;
                 flex-direction: column;
                 text-align: center;
-                gap: 2.5rem;
+                gap: 2rem;
+                transform: none; 
             }
             
             .text-content, .layout-grid.reverse .text-content {
                 order: 1 !important;
                 align-items: center !important;
                 text-align: center !important;
-                margin-bottom: 10px;
+                margin-bottom: 20px;
+                /* Ensure text is readable */
+                text-shadow: 0 2px 10px rgba(0,0,0,0.5);
             }
             
-            .cinema-card {
+            .cinema-card, .layout-center .cinema-card {
                 order: 2 !important;
                 width: 100% !important;
+                /* 16/9 is safer for mobile vertical viewing */
                 aspect-ratio: 16/9 !important; 
+                max-height: none !important;
             }
             
             .feature-list, .layout-grid.reverse .feature-list {
@@ -171,11 +277,16 @@
                 padding: 0 !important;
                 flex-direction: column;
                 align-items: center !important;
+                margin-top: 10px;
             }
 
             .section-title {
-                font-size: 2.5rem !important;
+                font-size: 2.2rem !important;
             }
+            
+            /* Adjust Activate Button for mobile */
+            #intro-overlay .brand-logo { height: 100px !important; }
+            .activate-btn { padding: 16px 30px; font-size: 1rem; min-width: auto; }
         }
 
         /* --- TYPOGRAPHY --- */
@@ -244,7 +355,7 @@
         /* --- VIDEO CARD --- */
         .cinema-card {
             width: 100%;
-            aspect-ratio: 2/1; /* Cinematographic Ratio */
+            aspect-ratio: 2/1; 
             background: #000;
             border-radius: var(--card-radius);
             overflow: hidden;
@@ -256,6 +367,12 @@
             z-index: 5;
         }
         
+        .cinema-card.tour-active {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.2);
+            transform: scale(1.02);
+        }
+
         .cinema-card:hover {
             transform: scale(1.02);
             border-color: rgba(255, 215, 0, 0.3);
@@ -272,36 +389,88 @@
         }
 
         .cinema-card:hover video,
-        .cinema-card.playing video {
+        .cinema-card.playing video,
+        .cinema-card.tour-active video {
             opacity: 1;
         }
 
-        .sound-badge {
+        /* LOCAL MUTE BUTTON */
+        .local-mute-btn {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 8px 16px;
-            border-radius: 10px;
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 8px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255,255,255,0.1);
-            pointer-events: none;
-            letter-spacing: 0.05em;
+            justify-content: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            opacity: 0; /* Hidden by default */
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            z-index: 30;
+            cursor: pointer;
+        }
+        
+        /* Show on hover OR if tour is active on mobile */
+        .cinema-card:hover .local-mute-btn,
+        .cinema-card.tour-active .local-mute-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .local-mute-btn:hover {
+            background: var(--accent-gold);
+            color: black;
+            border-color: var(--accent-gold);
         }
 
-        .cinema-card:hover .sound-badge {
-            opacity: 1;
-            transform: translateY(0);
+        /* CONTROLS CONTAINER */
+        .card-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            display: flex;
+            gap: 12px;
+            z-index: 20;
+            opacity: 0;
+            transition: all 0.3s ease;
         }
+
+        .cinema-card.tour-active .card-controls,
+        .cinema-card:hover .card-controls {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .control-btn {
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-next {
+            background: var(--accent-gold);
+            color: #000;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        .btn-next:hover { transform: scale(1.05); background: #ffe55c; }
+
+        .btn-prev {
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn-prev:hover { transform: scale(1.05); background: #fff; }
 
         /* --- ANIMATIONS --- */
         .reveal-blur {
@@ -330,6 +499,7 @@
             margin-top: 1.5rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            cursor: pointer;
         }
         .start-btn:hover {
             transform: scale(1.05);
@@ -337,35 +507,42 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
         }
 
-        /* --- SPECIAL FIX FOR SLIDE 1 --- */
-        /* Forces the video in the first grid to fill completely without black borders */
-        .layout-grid .cinema-card.hero-card {
-            width: 100%;
-            height: 100%;
-            aspect-ratio: 2/1; /* Enforce same ratio */
-        }
-        .layout-grid .cinema-card.hero-card video {
-            object-fit: cover; /* Strict cover to remove borders */
-            width: 100%;
-            height: 100%;
+        /* --- FIXES --- */
+        .layout-grid .cinema-card.hero-card { width: 100%; height: 100%; aspect-ratio: 2/1; }
+        .layout-grid .cinema-card.hero-card video { object-fit: cover; width: 100%; height: 100%; }
+        
+        @media (max-width: 1024px) {
+             .layout-grid .cinema-card.hero-card { aspect-ratio: 16/9; }
         }
 
     </style>
 </head>
 <body>
 
+    <!-- PROGRESS BAR -->
+    <div class="progress-track">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <!-- START SCREEN OVERLAY -->
+    <div id="intro-overlay">
+        <img src="QANTICALOGO.png" alt="Qantica" class="brand-logo" style="height: 180px; margin-bottom: 2rem;">
+        <button class="activate-btn" onclick="activateTour()">
+            ACTIVATE QANTICA
+        </button>
+        <p style="margin-top: 1rem; color: #666; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;">Audio & Video Experience</p>
+    </div>
+
     <div class="fixed-bg"></div>
 
-    <nav class="nav-bar">
-        <!-- FIXED LOGO SIZE (Bigger) -->
+    <nav class="nav-bar" id="main-nav">
         <img src="QANTICALOGO.png" alt="Qantica" class="brand-logo">
-        <div class="hidden md:block text-xs font-bold tracking-[0.2em] opacity-60">NARRATIVE OS v2.0</div>
     </nav>
 
-    <main>
+    <main id="main-content">
         
-        <!-- SCENE 01: Standard Grid (Video Fixed) -->
-        <section class="section-wrapper">
+        <!-- SCENE 01 -->
+        <section class="section-wrapper" id="scene-0">
             <div class="layout-container layout-grid">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">01 — Welcome</span>
@@ -377,185 +554,193 @@
                     </ul>
                 </div>
                 
-                <!-- Added 'hero-card' class for specific fix -->
                 <div class="cinema-card hero-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO1.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO1.mp4"></video>
+                    
+                    <div class="card-controls">
+                        <button class="control-btn btn-next" onclick="forceNext(0)">NEXT ></button>
                     </div>
+
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 02: Center Layout -->
-        <section class="section-wrapper">
+        <!-- SCENE 02 -->
+        <section class="section-wrapper locked" id="scene-1">
             <div class="layout-container layout-center">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">02 — Ingestion</span>
                     <h2 class="section-title">Manuscript Intake</h2>
                     <p class="section-desc">Bring your words to life. Our intelligent engine fixes structural errors while preserving your unique voice.</p>
-                    <ul class="feature-list">
-                        <li class="feature-item">Format Normalization</li>
-                        <li class="feature-item">Voice Preservation</li>
-                    </ul>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="auto" src="VIDEO2.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="auto" src="VIDEO2.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(1)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(1)">NEXT ></button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 03: Reverse Grid -->
-        <section class="section-wrapper">
+        <!-- SCENE 03 -->
+        <section class="section-wrapper locked" id="scene-2">
             <div class="layout-container layout-grid reverse">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">03 — Depth</span>
                     <h2 class="section-title">Character<br>Vision</h2>
                     <p class="section-desc">Go deeper into your protagonists. Map out motivations and arcs with our proprietary context engine.</p>
-                    <ul class="feature-list">
-                        <li class="feature-item">Motivation Mapping</li>
-                        <li class="feature-item">Relationship Web</li>
-                    </ul>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO3.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO3.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(2)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(2)">NEXT ></button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 04: Standard Grid -->
-        <section class="section-wrapper">
+        <!-- SCENE 04 -->
+        <section class="section-wrapper locked" id="scene-3">
             <div class="layout-container layout-grid">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">04 — Intelligence</span>
                     <h2 class="section-title">Neural<br>Scan</h2>
                     <p class="section-desc">Experience the scan. AI meticulously analyzes paragraphs to find the hidden potential of your narrative.</p>
-                    <ul class="feature-list">
-                        <li class="feature-item">Deep Text Analysis</li>
-                        <li class="feature-item">Subtext Detection</li>
-                    </ul>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO4.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO4.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(3)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(3)">NEXT ></button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 05: Center Layout -->
-        <section class="section-wrapper">
+        <!-- SCENE 05 -->
+        <section class="section-wrapper locked" id="scene-4">
             <div class="layout-container layout-center">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">05 — Optimization</span>
                     <h2 class="section-title">Friction Heatmap</h2>
                     <p class="section-desc">Identify where your story peaks and where it needs more heart through our visual heatmap.</p>
-                    <ul class="feature-list">
-                        <li class="feature-item">Pacing Visualization</li>
-                        <li class="feature-item">Emotional Peaks</li>
-                    </ul>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO5.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO5.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(4)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(4)">NEXT ></button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 06: Reverse Grid -->
-        <section class="section-wrapper">
+        <!-- SCENE 06 -->
+        <section class="section-wrapper locked" id="scene-5">
             <div class="layout-container layout-grid reverse">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">06 — Humanity</span>
                     <h2 class="section-title">Expert<br>Review</h2>
                     <p class="section-desc">Humanity meets technology. Specialized editors refine suggestions to ensure art remains authentic.</p>
-                    <ul class="feature-list">
-                        <li class="feature-item">Human-in-the-loop</li>
-                        <li class="feature-item">Artistic Integrity</li>
-                    </ul>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO6.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO6.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(5)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(5)">NEXT ></button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 07: Standard Grid -->
-        <section class="section-wrapper">
+        <!-- SCENE 07 -->
+        <section class="section-wrapper locked" id="scene-6">
             <div class="layout-container layout-grid">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">07 — Genetics</span>
                     <h2 class="section-title">Narrative<br>DNA</h2>
                     <p class="section-desc">Dialogue, beats, and tempo. We break down the DNA of your scenes to make every word count.</p>
-                    <ul class="feature-list">
-                        <li class="feature-item">Beat Analysis</li>
-                        <li class="feature-item">Tempo Control</li>
-                    </ul>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO7.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO7.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(6)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(6)">NEXT ></button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 08: Reverse Grid -->
-        <section class="section-wrapper">
+        <!-- SCENE 08 -->
+        <section class="section-wrapper locked" id="scene-7">
             <div class="layout-container layout-grid reverse">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">08 — Transformation</span>
                     <h2 class="section-title">Before &<br>After</h2>
                     <p class="section-desc">See the evolution. Watch how original ideas transform into a polished masterpiece side-by-side.</p>
-                    <ul class="feature-list">
-                        <li class="feature-item">Real-time Comparison</li>
-                        <li class="feature-item">Version History</li>
-                    </ul>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO8.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO8.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(7)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(7)">NEXT ></button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 09: Center (Finish) -->
-        <section class="section-wrapper">
+        <!-- SCENE 09 -->
+        <section class="section-wrapper locked" id="scene-8">
             <div class="layout-container layout-center">
                 <div class="text-content reveal-blur">
                     <span class="tag-pill">09 — Mastery</span>
                     <h2 class="section-title">The Finish Line</h2>
                     <p class="section-desc">Mastered and ready. Your story is now prepared for global production and distribution.</p>
-                    <a href="#" class="start-btn">Start Your Journey</a>
+                    <!-- RESTART BUTTON -->
+                    <button class="start-btn" onclick="restartTour()">START AGAIN</button>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
-                    <video loop muted playsinline preload="metadata" src="VIDEO9.mp4"></video>
-                    <div class="sound-badge">
-                        <span>RESTART & UNMUTE</span>
+                    <video muted playsinline preload="metadata" src="VIDEO9.mp4"></video>
+                    <div class="card-controls">
+                        <button class="control-btn btn-prev" onclick="forcePrev(8)">&lt; PREV</button>
                     </div>
+                    <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
                 </div>
             </div>
         </section>
@@ -567,6 +752,138 @@
     </footer>
 
     <script>
+        // --- GLOBAL STATE ---
+        let isTourActive = false;
+        const totalScenes = 9;
+
+        // --- NAV VISIBILITY ---
+        function updateNavVisibility(index) {
+            const nav = document.getElementById('main-nav');
+            if (index > 0) {
+                nav.classList.add('nav-hidden');
+            } else {
+                nav.classList.remove('nav-hidden');
+            }
+        }
+
+        // --- LOCAL MUTE LOGIC (Per Video) ---
+        function toggleLocalMute(btn, event) {
+            event.stopPropagation(); // Prevent card hover triggers
+            const video = btn.parentElement.querySelector('video');
+            video.muted = !video.muted;
+            
+            // Update icon style based on state
+            if(video.muted) {
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+                btn.style.borderColor = 'rgba(255,0,0,0.5)';
+            } else {
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+                btn.style.borderColor = 'rgba(255,255,255,0.2)';
+            }
+        }
+
+        // --- TOUR LOGIC ---
+        function activateTour() {
+            isTourActive = true;
+            document.getElementById('intro-overlay').classList.add('hidden-overlay');
+            document.body.classList.add('tour-mode');
+
+            // MOBILE WARM-UP HACK: 
+            // Try to initialize audio context for all videos on the first interaction
+            document.querySelectorAll('video').forEach(v => {
+                v.loop = false;
+                v.muted = false; // Attempt unmute permission trigger
+            });
+
+            playScene(0);
+        }
+
+        function restartTour() {
+            const currentVideos = document.querySelectorAll('video');
+            currentVideos.forEach(v => {
+                v.pause();
+                v.currentTime = 0;
+                v.muted = true;
+            });
+            window.scrollTo(0,0);
+            activateTour();
+        }
+
+        function playScene(index) {
+            updateNavVisibility(index);
+
+            if (index >= totalScenes) {
+                document.body.classList.remove('tour-mode');
+                document.querySelectorAll('.section-wrapper').forEach(s => s.classList.remove('locked'));
+                updateProgressBar(100);
+                return;
+            }
+
+            const percentage = ((index) / (totalScenes - 1)) * 100;
+            updateProgressBar(percentage);
+
+            const sceneId = `scene-${index}`;
+            const section = document.getElementById(sceneId);
+            const card = section.querySelector('.cinema-card');
+            const video = section.querySelector('video');
+
+            section.classList.remove('locked');
+            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            document.querySelectorAll('.cinema-card').forEach(c => c.classList.remove('tour-active'));
+            card.classList.add('tour-active');
+            
+            video.currentTime = 0;
+            video.muted = false; // Force Unmute
+            video.volume = 1.0;
+            
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => {
+                    // Fail gracefully on strict mobile browsers
+                    video.muted = true;
+                    video.play();
+                });
+            }
+
+            video.onended = function() {
+                if (isTourActive) {
+                    playScene(index + 1);
+                } else {
+                    this.play(); 
+                }
+            };
+        }
+
+        function stopVideo(index) {
+            const currentScene = document.getElementById(`scene-${index}`);
+            if(currentScene) {
+                const video = currentScene.querySelector('video');
+                if(video) {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            }
+        }
+
+        function forceNext(currentIndex) {
+            stopVideo(currentIndex);
+            if (isTourActive) {
+                playScene(currentIndex + 1);
+            }
+        }
+
+        function forcePrev(currentIndex) {
+            stopVideo(currentIndex);
+            if (isTourActive) {
+                playScene(currentIndex - 1);
+            }
+        }
+
+        function updateProgressBar(percent) {
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -576,52 +893,7 @@
         }, { threshold: 0.1, rootMargin: "-50px 0px" });
 
         document.querySelectorAll('.reveal-blur').forEach(el => revealObserver.observe(el));
-
-        const cards = document.querySelectorAll('.cinema-card');
-
-        const scrollVideoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const card = entry.target;
-                const video = card.querySelector('video');
-                
-                if (entry.isIntersecting) {
-                    video.muted = true;
-                    if (video.currentTime > 0.5 && video.paused) {
-                         video.currentTime = 0; 
-                    }
-                    const playPromise = video.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(() => {});
-                    }
-                    card.classList.add('playing');
-                } else {
-                    video.pause();
-                    card.classList.remove('playing');
-                }
-            });
-        }, { threshold: 0.5 }); 
-
-        cards.forEach(card => {
-            const video = card.querySelector('video');
-            scrollVideoObserver.observe(card);
-
-            card.addEventListener('mouseenter', () => {
-                video.currentTime = 0; 
-                video.muted = false;   
-                video.volume = 1.0; 
-                
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => console.error("Hover play error:", e));
-                }
-            });
-
-            card.addEventListener('mouseleave', () => {
-                video.muted = true; 
-            });
-        });
     </script>
 </body>
 </html>
-
 
