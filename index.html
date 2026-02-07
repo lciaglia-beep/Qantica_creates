@@ -279,7 +279,8 @@
                 font-size: 2.2rem !important;
             }
             
-            #intro-overlay .brand-logo { height: 100px !important; }
+            /* Logo bigger on mobile overlay as well */
+            #intro-overlay .brand-logo { height: 160px !important; }
             .activate-btn { padding: 16px 30px; font-size: 1rem; min-width: auto; }
         }
 
@@ -483,21 +484,21 @@
         .layout-grid .cinema-card.hero-card { width: 100%; height: 100%; aspect-ratio: 2/1; }
         .layout-grid .cinema-card.hero-card video { object-fit: cover; width: 100%; height: 100%; }
         
-        /* FIX FOR SCENE 7 (Video 8): Reduce height slightly to avoid black bars/cut off */
+        /* FIX FOR SCENE 7 (Video 8) */
         #scene-7 .cinema-card {
-            max-height: 45vh; /* Custom Constraint */
+            max-height: 45vh; 
             width: auto;
             max-width: 100%;
         }
 
-        /* ADJUST SCENE 9 (Final): Lift up */
+        /* ADJUST SCENE 9 (Final) */
         #scene-8 .layout-center {
-            transform: translateY(-10vh); /* Lift more */
+            transform: translateY(-10vh); 
         }
 
         @media (max-width: 1024px) {
              .layout-grid .cinema-card.hero-card { aspect-ratio: 16/9; }
-             #scene-7 .cinema-card { max-height: none; width: 100%; } /* Reset on mobile */
+             #scene-7 .cinema-card { max-height: none; width: 100%; } 
              #scene-8 .layout-center { transform: none; }
         }
 
@@ -512,7 +513,8 @@
 
     <!-- START SCREEN OVERLAY -->
     <div id="intro-overlay">
-        <img src="QANTICALOGO.png" alt="Qantica" class="brand-logo" style="height: 180px; margin-bottom: 2rem;">
+        <!-- DOUBLED LOGO SIZE HERE (360px on desktop) -->
+        <img src="QANTICALOGO.png" alt="Qantica" class="brand-logo" style="height: 360px; margin-bottom: 2rem;">
         <button class="activate-btn" onclick="activateTour()">
             ACTIVATE QANTICA
         </button>
@@ -554,11 +556,11 @@
             </div>
         </section>
 
-        <!-- SCENE 02 -->
+        <!-- SCENE 02 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-1">
             <div class="layout-container layout-center">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">02 — Ingestion</span>
+                    <span class="tag-pill">02 — Registration</span>
                     <h2 class="section-title">Manuscript Intake</h2>
                     <p class="section-desc">Bring your words to life. Our intelligent engine fixes structural errors while preserving your unique voice.</p>
                 </div>
@@ -576,13 +578,13 @@
             </div>
         </section>
 
-        <!-- SCENE 03 -->
+        <!-- SCENE 03 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-2">
             <div class="layout-container layout-grid reverse">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">03 — Depth</span>
+                    <span class="tag-pill">03 — Details</span>
                     <h2 class="section-title">Character<br>Vision</h2>
-                    <p class="section-desc">Go deeper into your protagonists. Map out motivations and arcs with our proprietary context engine.</p>
+                    <p class="section-desc">Go deeper into your leading characters. Map out motivations and arcs with our proprietary context engine.</p>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
@@ -598,11 +600,11 @@
             </div>
         </section>
 
-        <!-- SCENE 04 -->
+        <!-- SCENE 04 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-3">
             <div class="layout-container layout-grid">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">04 — Intelligence</span>
+                    <span class="tag-pill">04 — Analysis</span>
                     <h2 class="section-title">Neural<br>Scan</h2>
                     <p class="section-desc">Experience the scan. AI meticulously analyzes paragraphs to find the hidden potential of your narrative.</p>
                 </div>
@@ -620,11 +622,11 @@
             </div>
         </section>
 
-        <!-- SCENE 05 -->
+        <!-- SCENE 05 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-4">
             <div class="layout-container layout-center">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">05 — Optimization</span>
+                    <span class="tag-pill">05 — Potential</span>
                     <h2 class="section-title">Friction Heatmap</h2>
                     <p class="section-desc">Identify where your story peaks and where it needs more heart through our visual heatmap.</p>
                 </div>
@@ -642,13 +644,13 @@
             </div>
         </section>
 
-        <!-- SCENE 06 -->
+        <!-- SCENE 06 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-5">
             <div class="layout-container layout-grid reverse">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">06 — Humanity</span>
+                    <span class="tag-pill">06 — Advice</span>
                     <h2 class="section-title">Expert<br>Review</h2>
-                    <p class="section-desc">Humanity meets technology. Specialized editors refine suggestions to ensure art remains authentic.</p>
+                    <p class="section-desc">Humanity meets technology. Specialized tutors refine suggestions to ensure art remains authentic.</p>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
@@ -664,11 +666,11 @@
             </div>
         </section>
 
-        <!-- SCENE 07 -->
+        <!-- SCENE 07 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-6">
             <div class="layout-container layout-grid">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">07 — Genetics</span>
+                    <span class="tag-pill">07 — Focus</span>
                     <h2 class="section-title">Narrative<br>DNA</h2>
                     <p class="section-desc">Dialogue, beats, and tempo. We break down the DNA of your scenes to make every word count.</p>
                 </div>
@@ -686,13 +688,13 @@
             </div>
         </section>
 
-        <!-- SCENE 08 -->
+        <!-- SCENE 08 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-7">
             <div class="layout-container layout-grid reverse">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">08 — Transformation</span>
+                    <span class="tag-pill">08 — Evolution</span>
                     <h2 class="section-title">Before &<br>After</h2>
-                    <p class="section-desc">See the evolution. Watch how original ideas transform into a polished masterpiece side-by-side.</p>
+                    <p class="section-desc">See the change. Watch how original ideas transform into a polished masterpiece side-by-side.</p>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
@@ -708,13 +710,13 @@
             </div>
         </section>
 
-        <!-- SCENE 09 (Final, Button Removed) -->
+        <!-- SCENE 09 (Modified Text) -->
         <section class="section-wrapper locked" id="scene-8">
             <div class="layout-container layout-center">
                 <div class="text-content reveal-blur">
-                    <span class="tag-pill">09 — Mastery</span>
+                    <span class="tag-pill">09 — IP Maximization</span>
                     <h2 class="section-title">The Finish Line</h2>
-                    <p class="section-desc">Mastered and ready. Your story is now prepared for global production and distribution.</p>
+                    <p class="section-desc">Curated and ready. Your story is now on its way to production and global distribution.</p>
                 </div>
                 
                 <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
@@ -777,6 +779,17 @@
             playScene(0);
         }
 
+        function restartTour() {
+            const currentVideos = document.querySelectorAll('video');
+            currentVideos.forEach(v => {
+                v.pause();
+                v.currentTime = 0;
+                v.muted = true;
+            });
+            window.scrollTo(0,0);
+            activateTour();
+        }
+
         function playScene(index) {
             updateNavVisibility(index);
 
@@ -802,13 +815,13 @@
             card.classList.add('tour-active');
             
             video.currentTime = 0;
-            video.muted = false; 
+            video.muted = false; // Force Unmute
             video.volume = 1.0;
             
             const playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.catch(e => {
-                    video.muted = true;
+                    video.muted = true; // Fallback
                     video.play();
                 });
             }
@@ -863,5 +876,6 @@
     </script>
 </body>
 </html>
+
 
 
