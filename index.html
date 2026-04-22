@@ -400,6 +400,7 @@
             color: white;
             border: 1px solid rgba(255,255,255,0.2);
             opacity: 0;
+            pointer-events: none; /* Previene clicks accidentales cuando está invisible */
             transform: scale(0.8);
             transition: all 0.3s ease;
             z-index: 30;
@@ -415,20 +416,23 @@
             gap: 12px;
             z-index: 20;
             opacity: 0; 
+            pointer-events: none; /* Previene clicks accidentales cuando está invisible */
             transition: all 0.3s ease;
         }
 
-        /* Aseguramos que siempre sean visibles durante el tour activo o hover */
+        /* Ahora SOLO aparecen al pasar el ratón o al tocar activando la clase show-ui */
         .cinema-card:hover .local-mute-btn,
-        .cinema-card.tour-active .local-mute-btn {
+        .cinema-card.show-ui .local-mute-btn {
             opacity: 1;
             transform: scale(1);
+            pointer-events: auto; /* Permite clicks solo cuando está visible */
         }
         
         .cinema-card:hover .card-controls,
-        .cinema-card.tour-active .card-controls {
+        .cinema-card.show-ui .card-controls {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
+            pointer-events: auto; /* Permite clicks solo cuando está visible */
         }
 
         .local-mute-btn:hover {
@@ -535,12 +539,13 @@
                     </ul>
                 </div>
                 
-                <!-- Added webkit-playsinline to all videos for maximum iOS compatibility -->
-                <div class="cinema-card hero-card reveal-blur" style="transition-delay: 0.1s;">
+                <!-- Añadido onclick="this.classList.toggle('show-ui')" a todas las tarjetas -->
+                <div class="cinema-card hero-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO1.mp4"></video>
                     
                     <div class="card-controls">
-                        <button class="control-btn btn-next" onclick="forceNext(0)">NEXT ></button>
+                        <!-- Añadido (event) a forceNext y forcePrev para evitar activar la tarjeta de fondo -->
+                        <button class="control-btn btn-next" onclick="forceNext(0, event)">NEXT ></button>
                     </div>
 
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
@@ -559,11 +564,11 @@
                     <p class="section-desc">Bring your words to life. Our intelligent engine fixes structural errors while preserving your unique voice.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="auto" src="VIDEO2.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(1)">&lt; PREV</button>
-                        <button class="control-btn btn-next" onclick="forceNext(1)">NEXT ></button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(1, event)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(1, event)">NEXT ></button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -581,11 +586,11 @@
                     <p class="section-desc">Go deeper into your leading characters. Map out motivations and arcs with our proprietary context engine.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO3.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(2)">&lt; PREV</button>
-                        <button class="control-btn btn-next" onclick="forceNext(2)">NEXT ></button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(2, event)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(2, event)">NEXT ></button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -603,11 +608,11 @@
                     <p class="section-desc">Experience the scan. AI meticulously analyzes paragraphs to find the hidden potential of your narrative.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO4.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(3)">&lt; PREV</button>
-                        <button class="control-btn btn-next" onclick="forceNext(3)">NEXT ></button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(3, event)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(3, event)">NEXT ></button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -625,11 +630,11 @@
                     <p class="section-desc">Identify where your story peaks and where it needs more heart through our visual heatmap.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO5.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(4)">&lt; PREV</button>
-                        <button class="control-btn btn-next" onclick="forceNext(4)">NEXT ></button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(4, event)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(4, event)">NEXT ></button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -647,11 +652,11 @@
                     <p class="section-desc">Humanity meets technology. Specialized tutors refine suggestions to ensure art remains authentic.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO6.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(5)">&lt; PREV</button>
-                        <button class="control-btn btn-next" onclick="forceNext(5)">NEXT ></button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(5, event)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(5, event)">NEXT ></button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -669,11 +674,11 @@
                     <p class="section-desc">Dialogue, beats, and tempo. We break down the DNA of your scenes to make every word count.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO7.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(6)">&lt; PREV</button>
-                        <button class="control-btn btn-next" onclick="forceNext(6)">NEXT ></button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(6, event)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(6, event)">NEXT ></button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -691,11 +696,11 @@
                     <p class="section-desc">See the change. Watch how original ideas transform into a polished masterpiece side-by-side.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO8.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(7)">&lt; PREV</button>
-                        <button class="control-btn btn-next" onclick="forceNext(7)">NEXT ></button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(7, event)">&lt; PREV</button>
+                        <button class="control-btn btn-next" onclick="forceNext(7, event)">NEXT ></button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -713,10 +718,10 @@
                     <p class="section-desc">Curated and ready. Your story is now on its way to production and global distribution.</p>
                 </div>
                 
-                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;">
+                <div class="cinema-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO9.mp4"></video>
                     <div class="card-controls">
-                        <button class="control-btn btn-prev" onclick="forcePrev(8)">&lt; PREV</button>
+                        <button class="control-btn btn-prev" onclick="forcePrev(8, event)">&lt; PREV</button>
                     </div>
                     <button class="local-mute-btn" onclick="toggleLocalMute(this, event)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -807,7 +812,10 @@
             // Ahora este scroll funcionará en móviles porque quitamos 'overflow: hidden' del body
             section.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            document.querySelectorAll('.cinema-card').forEach(c => c.classList.remove('tour-active'));
+            document.querySelectorAll('.cinema-card').forEach(c => {
+                c.classList.remove('tour-active');
+                c.classList.remove('show-ui'); // Resetear visibilidad de botones al cambiar de escena
+            });
             card.classList.add('tour-active');
             
             video.currentTime = 0;
@@ -850,13 +858,16 @@
             }
         }
 
-        function forceNext(currentIndex) {
+        // Modificamos forceNext y forcePrev para que acepten (event) y eviten que se cambie el show-ui accidentalmente al hacer clic
+        function forceNext(currentIndex, event) {
+            if(event) event.stopPropagation();
             stopVideo(currentIndex);
             isTourActive = true; // Asegurarnos de que el loop no se rompe
             playScene(currentIndex + 1);
         }
 
-        function forcePrev(currentIndex) {
+        function forcePrev(currentIndex, event) {
+            if(event) event.stopPropagation();
             stopVideo(currentIndex);
             isTourActive = true; // Asegurarnos de que el loop no se rompe
             playScene(currentIndex - 1);
@@ -878,5 +889,3 @@
     </script>
 </body>
 </html>
-
-
