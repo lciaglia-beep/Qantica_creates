@@ -27,11 +27,6 @@
             scroll-behavior: smooth;
         }
 
-        /* FIX 1: Removido 'overflow: hidden' que rompía el scroll automático en iOS Safari */
-        body.tour-mode {
-            touch-action: pan-y; /* Permite scroll natural pero optimiza comportamiento táctil */
-        }
-
         /* --- BACKGROUND FX --- */
         .fixed-bg {
             position: fixed;
@@ -385,7 +380,7 @@
             opacity: 1;
         }
 
-        /* FIX 2: Visibilidad de botones en móvil y escenas activas */
+        /* --- CONTROLES (Solo visibles al hover o toque) --- */
         .local-mute-btn {
             position: absolute;
             top: 20px;
@@ -400,7 +395,7 @@
             color: white;
             border: 1px solid rgba(255,255,255,0.2);
             opacity: 0;
-            pointer-events: none; /* Previene clicks accidentales cuando está invisible */
+            pointer-events: none; 
             transform: scale(0.8);
             transition: all 0.3s ease;
             z-index: 30;
@@ -416,23 +411,23 @@
             gap: 12px;
             z-index: 20;
             opacity: 0; 
-            pointer-events: none; /* Previene clicks accidentales cuando está invisible */
+            pointer-events: none;
             transition: all 0.3s ease;
         }
 
-        /* Ahora SOLO aparecen al pasar el ratón o al tocar activando la clase show-ui */
+        /* Aparecen al pasar el ratón o al tocar activando la clase show-ui */
         .cinema-card:hover .local-mute-btn,
         .cinema-card.show-ui .local-mute-btn {
             opacity: 1;
             transform: scale(1);
-            pointer-events: auto; /* Permite clicks solo cuando está visible */
+            pointer-events: auto;
         }
         
         .cinema-card:hover .card-controls,
         .cinema-card.show-ui .card-controls {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
-            pointer-events: auto; /* Permite clicks solo cuando está visible */
+            pointer-events: auto; 
         }
 
         .local-mute-btn:hover {
@@ -539,12 +534,10 @@
                     </ul>
                 </div>
                 
-                <!-- Añadido onclick="this.classList.toggle('show-ui')" a todas las tarjetas -->
                 <div class="cinema-card hero-card reveal-blur" style="transition-delay: 0.1s;" onclick="this.classList.toggle('show-ui')">
                     <video muted playsinline webkit-playsinline preload="metadata" src="VIDEO1.mp4"></video>
                     
                     <div class="card-controls">
-                        <!-- Añadido (event) a forceNext y forcePrev para evitar activar la tarjeta de fondo -->
                         <button class="control-btn btn-next" onclick="forceNext(0, event)">NEXT ></button>
                     </div>
 
@@ -737,6 +730,47 @@
         let isTourActive = false;
         const totalScenes = 9;
 
+        // --- SCROLL LOCK LOGIC ---
+        // Prevenimos el scroll del usuario mediante JS para evitar romper animaciones internas del navegador
+        let supportsPassive = false;
+        try {
+            window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+                get: function () { supportsPassive = true; } 
+            }));
+        } catch(e) {}
+
+        const wheelOpt = supportsPassive ? { passive: false } : false;
+        const wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+        function preventDefaultScroll(e) {
+            if (isTourActive) {
+                e.preventDefault();
+            }
+        }
+
+        function preventDefaultForScrollKeys(e) {
+            // Teclas de dirección, espacio, y avance/retroceso página
+            const keys = {37: 1, 38: 1, 39: 1, 40: 1, 32: 1, 33: 1, 34: 1, 35: 1, 36: 1};
+            if (keys[e.keyCode] && isTourActive) {
+                preventDefaultScroll(e);
+                return false;
+            }
+        }
+
+        function disableScroll() {
+            window.addEventListener('DOMMouseScroll', preventDefaultScroll, false); // Firefox viejo
+            window.addEventListener(wheelEvent, preventDefaultScroll, wheelOpt); // Desktop moderno
+            window.addEventListener('touchmove', preventDefaultScroll, wheelOpt); // Móviles (deslizar)
+            window.addEventListener('keydown', preventDefaultForScrollKeys, false); // Teclado
+        }
+
+        function enableScroll() {
+            window.removeEventListener('DOMMouseScroll', preventDefaultScroll, false);
+            window.removeEventListener(wheelEvent, preventDefaultScroll, wheelOpt);
+            window.removeEventListener('touchmove', preventDefaultScroll, wheelOpt);
+            window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+        }
+
         // --- NAV VISIBILITY ---
         function updateNavVisibility(index) {
             const nav = document.getElementById('main-nav');
@@ -765,11 +799,11 @@
         // --- TOUR LOGIC ---
         function activateTour() {
             isTourActive = true;
-            document.getElementById('intro-overlay').classList.add('hidden-overlay');
-            document.body.classList.add('tour-mode');
+            disableScroll(); // BLOQUEA el scroll manual del usuario
 
-            // Limpieza del Mobile Warmup: en iOS intentar desmutear aquí lanza errores silentes, 
-            // solo forzamos que se comporten como "inline"
+            document.getElementById('intro-overlay').classList.add('hidden-overlay');
+            
+            // Limpieza del Mobile Warmup
             document.querySelectorAll('video').forEach(v => {
                 v.loop = false;
                 v.setAttribute('playsinline', '');
@@ -793,10 +827,13 @@
         function playScene(index) {
             updateNavVisibility(index);
 
+            // FINAL DEL TOUR (Llega a la escena 9 o más)
             if (index >= totalScenes) {
-                document.body.classList.remove('tour-mode');
                 document.querySelectorAll('.section-wrapper').forEach(s => s.classList.remove('locked'));
                 updateProgressBar(100);
+                
+                isTourActive = false; // El tour ha terminado
+                enableScroll(); // DESBLOQUEA el scroll, permitiendo explorar libremente
                 return;
             }
 
@@ -809,12 +846,13 @@
             const video = section.querySelector('video');
 
             section.classList.remove('locked');
-            // Ahora este scroll funcionará en móviles porque quitamos 'overflow: hidden' del body
+            
+            // El scroll programático por JS funciona perfecto aunque el usuario no pueda scrollear manualmente
             section.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             document.querySelectorAll('.cinema-card').forEach(c => {
                 c.classList.remove('tour-active');
-                c.classList.remove('show-ui'); // Resetear visibilidad de botones al cambiar de escena
+                c.classList.remove('show-ui'); // Resetear visibilidad de botones
             });
             card.classList.add('tour-active');
             
@@ -826,10 +864,9 @@
             if (playPromise !== undefined) {
                 playPromise.catch(e => {
                     console.warn("Autoplay con sonido bloqueado por móvil, reproduciendo muteado.", e);
-                    video.muted = true; // Fallback crucial para que el tour no se rompa
+                    video.muted = true; // Fallback crucial
                     video.play().catch(err => console.error("No se pudo reproducir el video", err));
                     
-                    // FIX 3: Cambiamos visualmente el botón a muteado si el teléfono nos obligó a mutear
                     const muteBtn = section.querySelector('.local-mute-btn');
                     if (muteBtn) {
                         muteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
@@ -842,6 +879,7 @@
                 if (isTourActive) {
                     playScene(index + 1);
                 } else {
+                    // Si el tour terminó y reproducen un video suelto, que se repita o se quede quieto
                     this.play(); 
                 }
             };
@@ -858,18 +896,24 @@
             }
         }
 
-        // Modificamos forceNext y forcePrev para que acepten (event) y eviten que se cambie el show-ui accidentalmente al hacer clic
         function forceNext(currentIndex, event) {
             if(event) event.stopPropagation();
             stopVideo(currentIndex);
-            isTourActive = true; // Asegurarnos de que el loop no se rompe
+            // Mantiene el bloqueo activo al saltar manualmente
+            if (!isTourActive) {
+                isTourActive = true; 
+                disableScroll();
+            }
             playScene(currentIndex + 1);
         }
 
         function forcePrev(currentIndex, event) {
             if(event) event.stopPropagation();
             stopVideo(currentIndex);
-            isTourActive = true; // Asegurarnos de que el loop no se rompe
+            if (!isTourActive) {
+                isTourActive = true;
+                disableScroll();
+            }
             playScene(currentIndex - 1);
         }
 
